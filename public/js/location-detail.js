@@ -1,39 +1,71 @@
 // set the dimensions and margins of the graph
-let margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 460 - margin.left - margin.right,
+let margin, width, height;
+
+// Declare globals
+let svg, chart;
+
+window.addEventListener("load", function(event) {
+
+    margin = {top: 0, right: 0, bottom: 0, left: 0};
+    width = 600 - margin.left - margin.right;
     height = 400 - margin.top - margin.bottom;
 
-// append the svg object to the body of the page
-let svg = d3.select("#chart"),
-    margin = {top: 20, right: 20, bottom: 30, left: 50},
-    width = +svg.attr("width") - margin.left - margin.right,
-    height = +svg.attr("height") - margin.top - margin.bottom,
-    g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    //Get the right chart svg
+    svg = d3.select("#chart");
+
+    //Append the actual chart with all its properties
+    chart = svg.append("g")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    requestChartData();
+
+
+
+});
 
 async function requestChartData(){
 
-    let response = await fetch(resource);
+    // let response = await fetch(resource);
 
-    if (response.ok){
-        let data = await response.json()
-    }
+    // if (response.ok){
+    //     let data = await response.json()
+    // }
+
+    let data = [
+        {date: new Date("October 13, 2014 11:13:00"), value: 14},
+        {date: new Date("October 13, 2014 11:13:10"), value: 14.5},
+        {date: new Date("October 13, 2014 11:13:20"), value: 15},
+        {date: new Date("October 13, 2014 11:13:30"), value: 16},
+        {date: new Date("October 13, 2014 11:13:40"), value: 18},
+        {date: new Date("October 13, 2014 11:13:50"), value: 22},
+        {date: new Date("October 13, 2014 11:14:00"), value: 27},
+        {date: new Date("October 13, 2014 11:13:10"), value: 35},
+    ]
 
     drawChart(data);
 }
 
 function drawChart(data){
-    // Add X axis --> it is a date format
-    var x = d3.scaleTime()
-    .domain(d3.extent(data, function(d) { return d.date; }))
-    .range([ 0, width ]);
+
+    //Define x-axis gaps and labels
+    let x = d3.scaleTime()
+        .range([0, width])
+        .domain(d3.extent(data, function(d) { return d.date; }))
+
+    //Define y-axis gaps and labels
+    let y = d3.scaleLinear()
+        .range([0, height])
+        .domain([0, d3.max(data, function(d) { return d.value; })]);
+
+    // Append x-axis to chart
     svg.append("g")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.axisBottom(x));
 
     // Add Y axis
-    var y = d3.scaleLinear()
-    .domain([0, d3.max(data, function(d) { return d.value; })])
-    .range([ height, 0 ]);
     svg.append("g")
     .call(d3.axisLeft(y));
 
@@ -42,10 +74,12 @@ function drawChart(data){
     .datum(data)
     .attr("fill", "none")
     .attr("stroke", "steelblue")
-    .attr("stroke-width", 1.5)
+    .attr("stroke-width", 3)
     .attr("d", d3.line()
     .x(function(d) { return x(d.date) })
     .y(function(d) { return y(d.value) })
     )
+
+    console.log("done");
 
 }

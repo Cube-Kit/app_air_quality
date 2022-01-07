@@ -22,6 +22,7 @@ import { setupPassport } from "./utils/passport_utils";
 import { createCubeTables } from "./model/cube";
 import { createSensorDataTable } from "./model/sensor_data";
 import { setupMQTT } from "./utils/mqtt_utils";
+import { router as apiRoutes } from "./api/api";
 
 // Parse environment variables
 dotenv.config();
@@ -46,7 +47,15 @@ hbs.registerPartials(__dirname + '/templates/partials', function() {});
 app.use('/static', express.static(path.join(__dirname, './public')));
 
 // Add other middleware
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+            "frame-ancestors": ["*"],
+        },
+    },
+    frameguard: false,
+}));
 app.use(session({
     secret: process.env.SESSIONSECRET || 'secret',
     // Check if session store implements touch
@@ -58,6 +67,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use('/api', apiRoutes);
 
 // Start server
 app.listen(PORT, () => console.log(`Running on port: ${PORT}`));

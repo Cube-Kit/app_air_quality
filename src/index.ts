@@ -23,6 +23,7 @@ import { createCubeTables } from "./model/cube";
 import { createSensorDataTable } from "./model/sensor_data";
 import { setupMQTT } from "./utils/mqtt_utils";
 import { router as apiRoutes } from "./api/api";
+import { router as viewRoutes } from "./views/views";
 
 // Parse environment variables
 dotenv.config();
@@ -69,6 +70,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api', apiRoutes);
+app.use('/', viewRoutes);
 
 // Start server
 app.listen(PORT, () => console.log(`Running on port: ${PORT}`));

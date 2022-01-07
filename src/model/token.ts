@@ -10,6 +10,7 @@ import { checkTokenKeyValidity } from "../utils/input_check_utils";
 // Token table
 const createTokensTableQuery: string = "CREATE TABLE IF NOT EXISTS tokens (name CHAR(64) PRIMARY KEY, key CHAR(32) UNIQUE NOT NULL)";
 const getTokensQuery: string = 'SELECT * FROM tokens';
+const getTokenByNameQuery: string = 'SELECT * FROM tokens WHERE name=$1';
 const getTokenByKeyQuery: string = 'SELECT * FROM tokens WHERE key=$1';
 const addTokenQuery: string = "INSERT INTO tokens (name,key) VALUES ($1, $2) RETURNING *";
 const deleteTokenQuery: string = "DELETE FROM tokens WHERE key=$1";
@@ -30,6 +31,23 @@ export function getTokens(): Promise<Array<Token>> {
             })
 
             return resolve(tokens);
+        } catch(err) {
+            return reject(err);
+        }
+    });
+}
+
+export function getAppToken(): Promise<Token> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = await pool.query(getTokenByNameQuery, ["app"]);
+            // If there is no token, reject
+            if (!res.rows) {
+                return reject("no token with this name found");
+            }
+
+            // Return token
+            return resolve(res.rows[0]);
         } catch(err) {
             return reject(err);
         }

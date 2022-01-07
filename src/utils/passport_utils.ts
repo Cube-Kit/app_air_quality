@@ -10,7 +10,7 @@ import { Token } from "../types";
 import passport from "passport";
 import { Strategy as HttpBearerStrategy } from "passport-http-bearer";
 // Internal imports
-import { getTokenByKey } from "../model/token";
+import { getTokenByKey, getAppToken } from "../model/token";
 
 /**
  * Setup the passport strategies and de-/serialization methods.
@@ -22,18 +22,37 @@ export async function setupPassport():Promise<void> {
      */
     passport.use(new HttpBearerStrategy((token, done) => {
         getTokenByKey(token)
-            .then(async (tokenObj: null | Token) => {
-                // Check if token object returned
-                if (!tokenObj) {
-                    return done(null, false, {message: 'Token existiert nicht', scope: 'all'});
-                }
-
-                // Return tokenObj if all is correct
+            .then(async (tokenObj: Token) => {
+                // Return token
                 return done(null, tokenObj);
             })
             .catch((err: Error) => {
-                return done(err);
+                return done(null, false, {message: 'Token existiert nicht', scope: 'all'});
             });
-
     }));
+
+    /**
+     * Get name from token
+     */
+     passport.serializeUser((token, done) => {
+        //Seems to be a bug in the @types/passport package
+        //Where the standard user does not have an ID, but is required to have an id in this method
+        //@ts-ignore
+        done(null, token.name);
+    });
+
+    /**
+     * Get user from name
+     */
+    passport.deserializeUser(async (name: string, done) => {
+
+        getAppToken()
+            .then((token: Token) => {
+
+                done(null, token);
+            })
+            .catch((err: Error) => {
+                done(err, null);
+            });
+    });
 }

@@ -13,7 +13,8 @@ const getTokensQuery: string = 'SELECT * FROM tokens';
 const getTokenByNameQuery: string = 'SELECT * FROM tokens WHERE name=$1';
 const getTokenByKeyQuery: string = 'SELECT * FROM tokens WHERE key=$1';
 const addTokenQuery: string = "INSERT INTO tokens (name,key) VALUES ($1, $2) RETURNING *";
-const deleteTokenQuery: string = "DELETE FROM tokens WHERE key=$1";
+const deleteTokenByKeyQuery: string = "DELETE FROM tokens WHERE key=$1";
+const deleteTokenByNameQuery: string = "DELETE FROM tokens WHERE name=$1";
 
 export function createTokensTable(): Promise<QueryResult<any>> {
     return pool.query(createTokensTableQuery);
@@ -99,17 +100,56 @@ export function addToken(name: string, key?: string): Promise<Token> {
     });
 }
 
-export function deleteToken(token: Token): Promise<void> {
+export async function addAppToken(): Promise<Token> {
+    return new Promise(async (resolve, reject) => {
+        let app_token: Token;
+        try {
+            app_token = await addToken("app");
+            return resolve(app_token);
+        } catch (error) {
+            if ((error as Error).message.includes("duplicate key value violates unique constraint")) {
+                await deleteTokenByName("app");
+                app_token = await addAppToken();
+                return resolve(app_token);;
+            } else {
+                console.log(error);
+            }
+        }
+    });
+}
+
+export function deleteTokenByKey(key: string): Promise<void> {
     return new Promise(async (resolve, reject) => {
         // Check key
         try {
-            checkTokenKeyValidity(token.key);
+            checkTokenKeyValidity(key);
         } catch(err) {
             return reject(err);
         }
         
         try {
-            await pool.query(deleteTokenQuery, [token.key]);
+            await pool.query(deleteTokenByKeyQuery, [key]);
+
+            return resolve();
+        } catch(err) {
+            return reject(err);
+        }
+    });
+}
+
+export function deleteTokenByName(name: string): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        // Check name
+        try {
+            if(name === undefined) {
+                throw new Error("name is undefined");
+            }
+        } catch(err) {
+            return reject(err);
+        }
+        
+        try {
+            await pool.query(deleteTokenByNameQuery, [name]);
 
             return resolve();
         } catch(err) {

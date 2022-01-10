@@ -51,7 +51,7 @@ export function getCubes(): Promise<Array<Cube>> {
     });
 }
 
-export function getCubeWithId(cubeId: string): Promise<Cube> {
+export function getCubeById(cubeId: string): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
         //Check cubeId
         try {
@@ -68,7 +68,6 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
             }
 
             let cube: Cube = res.rows[0];
-            cube.ip = cube.ip.trim();
             cube.location = cube.location.trim();
 
             return resolve(cube);
@@ -121,11 +120,11 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
         try {
             //Check if cube exists
-            await getCubeWithId(cubeId);
+            await getCubeById(cubeId);
             //Update cube location
             await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
 
-            return resolve(getCubeWithId(cubeId));
+            return resolve(getCubeById(cubeId));
         } catch(err) {
             return reject(err);
         }

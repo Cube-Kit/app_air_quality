@@ -1,24 +1,35 @@
 // Type imports
 import { Router, Request, Response } from "express";
+import { Cube } from "../types";
 // External imports
 import express from "express";
 import passport from "passport";
-import { defaultMaxListeners } from "events";
+import { getCubeById } from "../model/cube";
 // Internal imports
 
 // Export the router
 export var router: Router = express.Router();
 
 // Authenticate token
-//router.use('/', passport.authenticate('bearer'));
+// router.use('/', passport.authenticate('bearer'));
 
-router.get('/', (req, res) => {
-    res.render("location-detail");
-})
+// router.get('/', (req, res) => {
+//     let locations = getLocations();
+//     res.render("location-list", {locations: locations});
+// })
 
-router.get('/', (req, res) => {
-    res.send("<h1>Hello World</h1>");
-})
+router.get('/:cubeId', getLocationDetail);
 
-// Delegate view-routes to their views
-// router.use('/', ... )
+
+async function getLocationDetail(req: Request, res: Response) {
+
+    let cubeId: string = req.params["cubeId"];
+    try {
+        let cube: Cube = await getCubeById(cubeId);
+        res.render("location-detail", {
+            cubeId: cube.id
+        });
+    } catch (error) {
+        res.status(500);
+    }
+}

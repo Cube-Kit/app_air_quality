@@ -2,7 +2,7 @@
 let margin, width, height;
 
 // Declare globals
-let svg, chart;
+let svg, chart, cubeId;
 
 window.addEventListener("load", function(event) {
 
@@ -10,8 +10,11 @@ window.addEventListener("load", function(event) {
     width = 600 - margin.left - margin.right;
     height = 400 - margin.top - margin.bottom;
 
-    //Get the right chart svg
+    // Get the right chart svg
     svg = d3.select("#chart");
+
+    // Get cubeId from <input> element
+    cubeId = document.getElementById("cubeId").value;
 
     //Append the actual chart with all its properties
     chart = svg.append("g")
@@ -28,13 +31,44 @@ window.addEventListener("load", function(event) {
 
 async function requestChartData(){
 
-    // let response = await fetch(resource);
+    let resource = window.location.host;
+    resource += "/api/data/";
+    resource += cubeId;
 
-    // if (response.ok){
-    //     let data = await response.json()
-    // }
+    let data;
 
-    let data = [
+    try {
+        let response = await fetch(resource, {
+            method: "post",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+          
+            //make sure to serialize your JSON body
+            body: JSON.stringify({
+              
+            })
+        });
+
+        if (response.ok){
+            data = await response.json()
+            console.log(data);
+        } else {
+            data = [
+                {date: new Date("October 13, 2014 11:13:00"), value: 14},
+                {date: new Date("October 13, 2014 11:13:10"), value: 14.5},
+                {date: new Date("October 13, 2014 11:13:20"), value: 15},
+                {date: new Date("October 13, 2014 11:13:30"), value: 16},
+                {date: new Date("October 13, 2014 11:13:40"), value: 18},
+                {date: new Date("October 13, 2014 11:13:50"), value: 22},
+                {date: new Date("October 13, 2014 11:14:00"), value: 27},
+                {date: new Date("October 13, 2014 11:13:10"), value: 35},
+                ]
+        }
+
+    } catch(error) {
+        data = [
         {date: new Date("October 13, 2014 11:13:00"), value: 14},
         {date: new Date("October 13, 2014 11:13:10"), value: 14.5},
         {date: new Date("October 13, 2014 11:13:20"), value: 15},
@@ -43,7 +77,12 @@ async function requestChartData(){
         {date: new Date("October 13, 2014 11:13:50"), value: 22},
         {date: new Date("October 13, 2014 11:14:00"), value: 27},
         {date: new Date("October 13, 2014 11:13:10"), value: 35},
-    ]
+        ]
+
+        console.log(error);
+    }
+
+    
 
     drawChart(data);
 }
@@ -57,7 +96,7 @@ function drawChart(data){
 
     //Define y-axis gaps and labels
     let y = d3.scaleLinear()
-        .range([0, height])
+        .range([height, 0])
         .domain([0, d3.max(data, function(d) { return d.value; })]);
 
     // Append x-axis to chart

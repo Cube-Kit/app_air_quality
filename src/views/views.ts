@@ -16,5 +16,9 @@ router.get('/', (req, res) => {
     res.render("location-detail");
 })
 
+router.get('/', (req, res) => {
+    res.send("<h1>Hello World</h1>");
+})
+
 // Delegate view-routes to their views
 // router.use('/', ... )

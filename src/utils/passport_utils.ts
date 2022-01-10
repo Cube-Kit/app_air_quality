@@ -22,20 +22,19 @@ export async function setupPassport():Promise<void> {
      */
     passport.use(new HttpBearerStrategy((token, done) => {
         getTokenByKey(token)
-            .then(async (token: Token) => {
+            .then(async (tokenObj: Token) => {
                 // Return token
-                return done(null, token);
+                return done(null, tokenObj);
             })
             .catch((err: Error) => {
                 return done(null, false, {message: 'Token existiert nicht', scope: 'all'});
             });
-
     }));
 
     /**
      * Get name from token
      */
-    passport.serializeUser((token, done) => {
+     passport.serializeUser((token, done) => {
         //Seems to be a bug in the @types/passport package
         //Where the standard user does not have an ID, but is required to have an id in this method
         //@ts-ignore

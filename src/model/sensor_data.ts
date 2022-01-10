@@ -5,16 +5,16 @@ import { pool } from "../index";
 import { checkCubeId, checkTimestampValidity } from "../utils/input_check_utils";
 
 // Sensor data tables
-const createDataTableQuery: string = "";
+const createDataTableQuery: string = "CREATE TABLE IF NOT EXISTS data (id SERIAL PRIMARY KEY, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, FOREIGN KEY(cube_id) REFERENCES cubes(id) ON DELETE CASCADE)";
 // Get sensor data
-const getDataQuery: string = "";
+const getDataQuery: string = "SELECT * FROM data";
 // Persist sensor data
-const persistDataQuery: string = "";
+const persistDataQuery: string = "INSERT INTO data (cube_id, timestamp, data) VALUES ($1, $2, $3)";
 
 export function createSensorDataTable(): Promise<void> {
     return new Promise(async (resolve, reject) => {
         try {
-            // await pool.query(createDataTableQuery);
+            await pool.query(createDataTableQuery);
 
             return resolve();
         } catch(err) {

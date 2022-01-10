@@ -3,8 +3,6 @@
  * 
  * @module
  */
-// Type imports
-import { Sensor } from "../types";
 // External imports
 import { validate as uuidvalidate } from "uuid";
 
@@ -24,31 +22,6 @@ import { validate as uuidvalidate } from "uuid";
     if (!uuidvalidate(cubeId)) {
         throw(new Error("cubeId is not a valid uuid"));
     }
-}
-
-/**
- * Check validity of the [Sensors]{@link types.Sensor} of a [Cube]{@link types.Cube}
- * 
- * Array can not be empty of undefined\
- * Each [Sensor]{@link types.Sensor} can not have empty or undefined sensor type or scanInterval
- * 
- * @param sensors the [Sensors]{@link types.Sensor} of a [Cube]{@link types.Cube}
- */
-export function checkSensorArray(sensors: Array<Sensor>): void {
-    if (sensors === undefined || sensors.length == 0) {
-        throw(new Error("sensors array is undefined or empty"));
-    }
-
-    sensors.forEach((sensor: Sensor) => {
-        //Check if sensor type is valid
-        if (sensor.type === undefined || !sensor.type.trim()) {
-            throw(new Error("sensor type is not valid"));
-        }
-        //Check if sensor scan_interval is valid
-        if (!sensor.scanInterval || sensor.scanInterval <= 0) {
-            throw(new Error ("sensor scan_interval is not valid."))
-        }
-    });
 }
 
 /**

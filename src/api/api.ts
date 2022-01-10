@@ -5,7 +5,6 @@ import express from "express";
 // Internal imports
 import { router as setupRouter } from "./setup";
 import { getSensorData } from "../model/sensor_data";
-import { checkCubeId, checkTimestampValidity } from "../utils/input_check_utils";
 
 // Export the router
 export var router: Router = express.Router();

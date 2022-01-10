@@ -6,18 +6,9 @@ export interface Token {
 export interface Cube {
     id: string,
     ip: string,
-    location: string,
-    sensors: Array<Sensor>,
-    actuators: Array<string>
+    location: string
 }
 
 export interface CubeVariables {
-    location: string,
-    sensors: Array<Sensor>,
-    actuators: string
-}
-
-export interface Sensor {
-    type: string,
-    scanInterval: number
+    location: string
 }

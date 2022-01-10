@@ -2,7 +2,7 @@
 import { Token } from "../types";
 import { QueryResult } from "pg";
 // External imports
-import { v4 as uuidv4, validate as uuidvalidate } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 // Internal imports
 import { pool } from "..";
 import { checkTokenKeyValidity } from "../utils/input_check_utils";

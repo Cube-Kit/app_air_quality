@@ -3,7 +3,6 @@ import { Cube, CubeVariables } from '../types';
 import { QueryResult } from 'pg';
 // External imports
 import format from 'pg-format';
-import { v4 as uuidv4 } from "uuid";
 // Internal imports
 import { pool } from "../index";
 import { checkCubeId } from '../utils/input_check_utils';

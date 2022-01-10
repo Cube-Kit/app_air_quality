@@ -109,7 +109,6 @@ export function getSensorData(cubeId?: string, start?: string, end?: string): Pr
             }
 
             sensor_data.push({
-                "sensorType": row.sensor_type.trim(),
                 "cubeId": row.cube_id,
                 "timestamp": row.timestamp.toLocaleString(),
                 "data": row.data,

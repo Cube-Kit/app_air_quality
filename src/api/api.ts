@@ -11,7 +11,7 @@ export var router: Router = express.Router();
 
 // Delegate API-routes to their routers
 router.use('/setup', setupRouter);
-router.get('/data/:cubeId', getData);
+router.post('/data/:cubeId', getData);
 
 async function getData(req: Request, res: Response) {
     let cubeId: string = req.params['cubeId'];

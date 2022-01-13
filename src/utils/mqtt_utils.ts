@@ -179,7 +179,7 @@ async function handleCubeData(topic: Array<string>, message: string) {
  * @param topic topic of the message formatted like this: sensor/sensor_type/cubeId
  */
 function handleSensorData(topic: Array<string>, message: string): void {
-    if (topic[1] === "voc") {
+    if (topic[1] === "co2") {
         persistSensorData(topic[2], message)
             .catch((err: Error) => {
                 console.log(err.stack);

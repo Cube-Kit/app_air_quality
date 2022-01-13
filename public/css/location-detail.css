@@ -1,8 +1,12 @@
 #chart {
     text-align: center;
-    margin-left: 50;
+    margin-left: 50px;
 }
 
 #chartContainer {
-    margin-left: 50;
+    margin-left: 50px;
+}
+
+svg {
+    margin: 50px;
 }

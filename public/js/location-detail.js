@@ -18,10 +18,10 @@ window.addEventListener("load", function(event) {
 
     //Append the actual chart with all its properties
     chart = svg.append("g")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     requestChartData();
 
@@ -95,12 +95,12 @@ function drawChart(data){
     //Define x-axis gaps and labels
     let x = d3.scaleTime()
         .range([0, width])
-        .domain(d3.extent(data, function(d) { return new Date(d.timestamp); }))
+        .domain(d3.extent(data, (d) => { return new Date(d.timestamp); }))
 
     //Define y-axis gaps and labels
     let y = d3.scaleLinear()
         .range([height, 0])
-        .domain([0, d3.max(data, function(d) { return d.data; })]);
+        .domain([0, d3.max(data, (d) => { return d.data; })]);
 
     // Append x-axis to chart
     svg.append("g")
@@ -109,6 +109,7 @@ function drawChart(data){
 
     // Add Y axis
     svg.append("g")
+    //.attr("transform", "translate(0," + width + ")")
     .call(d3.axisLeft(y));
 
     // Add the line
@@ -118,8 +119,8 @@ function drawChart(data){
     .attr("stroke", "steelblue")
     .attr("stroke-width", 3)
     .attr("d", d3.line()
-    .x(function(d) { return x(new Date(d.timestamp)) })
-    .y(function(d) { return y(d.data) })
+    .x((d) => { return x(new Date(d.timestamp)) })
+    .y((d) => { return y(d.data) })
     )
 
     console.log("done");

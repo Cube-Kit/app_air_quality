@@ -98,7 +98,7 @@ export async function addCube(cubeId: string, location: string): Promise<void> {
             await client.query(addCubeQuery, [cubeId, location]);
 
             //Subscribe to cube topic
-            await subscribeCubeMQTTTopic(cubeId, 2);
+            await subscribeCubeMQTTTopic([cubeId]);
 
             return resolve();
         } catch(err) {

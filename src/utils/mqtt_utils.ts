@@ -11,6 +11,7 @@ import { Cube } from "../types";
 import mqtt from "mqtt";
 //internal imports
 import { addCube, deleteCubeWithId, getCubes, updateCubeWithId } from "../model/cube";
+import { persistSensorData } from "../model/sensor_data";
 
 /**
  * Holds the connection to the MQTT broker.
@@ -178,5 +179,10 @@ async function handleCubeData(topic: Array<string>, message: string) {
  * @param topic topic of the message formatted like this: sensor/sensor_type/cubeId
  */
 function handleSensorData(topic: Array<string>, message: string): void {
-    // Implement
+    if (topic[1] === "voc") {
+        persistSensorData(topic[2], message)
+            .catch((err: Error) => {
+                console.log(err.stack);
+            });
+    }
 }

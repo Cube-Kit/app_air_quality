@@ -10,7 +10,7 @@ import { Cube } from "../types";
 //external imports
 import mqtt from "mqtt";
 //internal imports
-import { addCube, getCubes, updateCubeWithId } from "../model/cube";
+import { addCube, deleteCubeWithId, getCubes, updateCubeWithId } from "../model/cube";
 
 /**
  * Holds the connection to the MQTT broker.
@@ -155,6 +155,14 @@ async function handleCubeData(topic: Array<string>, message: string) {
             try {
                 await updateCubeWithId(cube.id, {location: cube.location});
                 console.log("updated cube "+ cube.id +" at location " + cube.location);
+            } catch (error) {
+                console.log(error);
+            }
+            break;
+        case 'delete':
+            try {
+                await deleteCubeWithId(cube.id);
+                console.log("deleted cube "+ cube.id);
             } catch (error) {
                 console.log(error);
             }

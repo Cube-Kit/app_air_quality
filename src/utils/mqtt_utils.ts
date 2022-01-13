@@ -133,8 +133,9 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
             break;
         case 'cube':
             handleCubeData(topic, message);
+            break;
         default:
-            console.log('Unrecognized topic: ' + topicString);
+            console.log('Unrecognized topic: ' + topic[0]);
     }
 }
 
@@ -159,7 +160,7 @@ async function handleCubeData(topic: Array<string>, message: string) {
             }
             break;
         default:
-            console.log('Unrecognized topic: ' + topic);
+            console.log('Unrecognized topic: ' + topic[0] + "/" + topic[1]);
     }
 }
 

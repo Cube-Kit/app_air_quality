@@ -68,7 +68,6 @@ export function getCubeWithId(cubeId: string): Promise<Cube> {
             }
 
             let cube: Cube = res.rows[0];
-            cube.ip = cube.ip.trim();
             cube.location = cube.location.trim();
 
             return resolve(cube);

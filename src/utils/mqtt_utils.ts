@@ -53,33 +53,29 @@ export async function setupMQTT(): Promise<void> {
             topics['cube/#'] = {'qos': 2};
             subscribeMQTTTopics(topics);
 
-            try {
-                //Subscribe to topic of existing cubes
-                let cubes: Cube[] = await getCubes();
-
-                cubes.forEach(async (cube: Cube) => {
-                    await subscribeCubeMQTTTopic(cube.id, 2);
-                });
-
-                resolve();
-            } catch(err) {
-                console.log(err);
-            }
+            //Subscribe to sensor data of existing cubes
+            let cubes: Cube[] = await getCubes();
+            let ids: string[] = [];
+            cubes.forEach((cube: Cube) => {
+                ids.push(cube.id);
+            });
+            subscribeCubeMQTTTopic(ids);
         });
     });
 }
 
 /**
- * Wrapper to subscribe to the MQTT topic for a cube.
+ * Wrapper to subscribe to the MQTT topics for existing cubes.
  * 
- * @param cubeId the id of a [Cube]{@link types.Cube}
- * @param qos the quality of service for this topic (0=at most once, 1=at least once, 2=exactly once)
+ * @param cubeIds ids of [Cubes]{@link types.Cube}
  */
-export async function subscribeCubeMQTTTopic(cubeId: string, qos: 0 | 1 | 2): Promise<void> {
+export async function subscribeCubeMQTTTopic(cubeIds: string[]): Promise<void> {
     let topics: ISubscriptionMap = {};
-    let topic: string = 'sensor/+/'+cubeId+'/#';
-    topics[topic] = {'qos': qos};
-
+    cubeIds.forEach((id) => {
+        let topic: string = 'sensor/+/'+id+'/#';
+        topics[topic] = {'qos': 2};
+    })
+    
     return subscribeMQTTTopics(topics);
 }
 

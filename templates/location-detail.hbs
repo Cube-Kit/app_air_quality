@@ -2,8 +2,8 @@
 {{#> html_head}}
     {{!Add custom scripts}}
     <link rel="stylesheet" href="static/css/location-detail.css">
-    <script src="/static/js/d3.v7.js"></script>
-    {{!-- <script src="http://d3js.org/d3.v7.min.js" charset="utf-8"></script> --}}
+    <link rel="stylesheet" href="static/css/chartist.css">
+    <script src="/static/js/chartist.js"></script>
     <script src="/static/js/location-detail.js"></script>
 {{/html_head}}
 
@@ -16,9 +16,7 @@
     <div id="content">
         <div id="chartContainer">
 
-            <svg id="chart" width="960" height="500"></svg>
-
-            
+            <div class="ct-chart ct-perfect-fourth"></div>
 
         </div>
     </div>

@@ -12,9 +12,8 @@ window.addEventListener("load", function(event)
     cubeId = document.getElementById("cubeId").value;
 
 
-    //TODO fix timezone offset
     //Set input fields to default
-    let date = new Date(Date.now());
+    let date = new Date();
     date.setMilliseconds(0);
     console.log(date.getTimezoneOffset());
     document.getElementById("fromTime").valueAsDate = new Date(date.getTime() - 45 * MS_PER_MINUTE);

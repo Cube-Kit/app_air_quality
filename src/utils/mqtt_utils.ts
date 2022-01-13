@@ -10,7 +10,7 @@ import { Cube } from "../types";
 //external imports
 import mqtt from "mqtt";
 //internal imports
-import { getCubes } from "../model/cube";
+import { addCube, getCubes, updateCubeWithId } from "../model/cube";
 
 /**
  * Holds the connection to the MQTT broker.
@@ -29,7 +29,10 @@ export async function setupMQTT(): Promise<void> {
         let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
         let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
         //Connect to broker
-        mqttClient = mqtt.connect('mqtt://'+mqttUrl, {port: mqttPort});
+        mqttClient = mqtt.connect([{
+            host: 'mqtt://'+mqttUrl,
+            port: mqttPort
+        }]);
 
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server');
@@ -45,6 +48,11 @@ export async function setupMQTT(): Promise<void> {
             mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
             mqttClient.on('message', handleMQTTMessage);
             
+            // Set default listeners
+            let topics: ISubscriptionMap = {};
+            topics['cube/#'] = {'qos': 2};
+            subscribeMQTTTopics(topics);
+
             try {
                 //Subscribe to topic of existing cubes
                 let cubes: Cube[] = await getCubes();
@@ -127,8 +135,35 @@ function handleMQTTMessage(topicString: string, messageBuffer: Buffer, packet: I
         case 'sensor':
             handleSensorData(topic, message);
             break;
+        case 'cube':
+            handleCubeData(topic, message);
         default:
             console.log('Unrecognized topic: ' + topicString);
+    }
+}
+
+async function handleCubeData(topic: Array<string>, message: string) {
+    var cube: Cube = JSON.parse(message);
+
+    switch (topic[1]) {
+        case 'create':
+            try {
+                await addCube(cube.id, cube.location);
+                console.log("added cube "+ cube.id +" at location " + cube.location);
+            } catch (error) {
+                console.log(error);
+            }
+            break;
+        case 'update':
+            try {
+                await updateCubeWithId(cube.id, {location: cube.location});
+                console.log("updated cube "+ cube.id +" at location " + cube.location);
+            } catch (error) {
+                console.log(error);
+            }
+            break;
+        default:
+            console.log('Unrecognized topic: ' + topic);
     }
 }
 

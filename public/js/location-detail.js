@@ -1,14 +1,32 @@
 // const { format } = require("path/posix");
 
 // Declare globals
-let options, cubeId;
+let chartOptions = {};
+let cubeId;
+var MS_PER_MINUTE = 60000;
 
-window.addEventListener("load", function(event) {
+window.addEventListener("load", function(event) 
+{
 
     // Get cubeId from <input> element
     cubeId = document.getElementById("cubeId").value;
 
-    // TODO: dynamically set options
+
+    //TODO fix timezone offset
+    //Set input fields to default
+    let date = new Date(Date.now());
+    date.setMilliseconds(0);
+    console.log(date.getTimezoneOffset());
+    document.getElementById("fromTime").valueAsDate = new Date(date.getTime() - 45 * MS_PER_MINUTE);
+    document.getElementById("toTime").valueAsDate = date;
+
+    // Dynamically set options
+    let chartConatiner = document.getElementById("chart");
+
+    chartOptions.width = (chartConatiner.innerWidth*0.85);
+    chartOptions.height = (chartConatiner.innerHeight*0.85);
+    chartOptions.showPoint = false;
+    chartOptions.lineSmooth = false;
 
     requestChartData();
 });
@@ -52,6 +70,13 @@ async function requestChartData(){
         console.log(error);
     }
 
+    
+    
+    drawChart(data);
+}
+
+function drawChart(data){
+
     let formatData = {labels: [], series: [[]]};
 
     data.forEach((element, index) => {
@@ -66,13 +91,8 @@ async function requestChartData(){
     });
 
     console.log(formatData);
-    
-    drawChart(formatData, options);
-}
 
-function drawChart(data){
-
-    new Chartist.Line('.ct-chart', data, options);
+    new Chartist.Line('.ct-chart', formatData, chartOptions);
     
     console.log("done");
 }

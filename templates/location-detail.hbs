@@ -11,14 +11,19 @@
 
     <input id="cubeId" type="hidden" value="{{cubeId}}">
 
-    <h1>air quality {{cubeId}}</h1>
 
     <div id="content">
-        <div id="chartContainer">
+        <h1>air quality {{cubeId}}</h1>
 
-            <div class="ct-chart ct-perfect-fourth"></div>
+        {{!-- TODO add selection input --}}
+        <label for="fromTime">From:</label>
+        <input type="datetime-local" id="fromTime">
+        <label for="toTime">To:</label>
+        <input type="datetime-local" id="toTime">
+        <input type="submit" value="Submit">
 
-        </div>
-    </div>
+        <div id="chart" class="ct-chart"></div>
+
+    </div>z
 
 </body>

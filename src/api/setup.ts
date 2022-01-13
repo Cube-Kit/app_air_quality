@@ -1,10 +1,11 @@
 // Type imports
 import { Router, Request, Response } from "express";
-import { Token } from "../types";
+import { Cube, Token } from "../types";
 // External imports
 import express from "express";
 // Internal imports
 import { addToken, addAppToken } from "../model/token";
+import { addCube } from "../model/cube";
 
 // Export the router
 export var router: Router = express.Router();
@@ -24,6 +25,16 @@ async function setup(req: Request, res: Response){
             return res.status(500);
         }
     }
+
+    // Add cubes to app
+    let cubes: Array<Cube> = req.body["cubes"];
+    cubes.forEach(async (cube: Cube) => {
+        try {
+            await addCube(cube.id, cube.location);
+        } catch (error) {
+            console.log(error);
+        }
+    });
     
     // Create an access token for the server to the app
     try {

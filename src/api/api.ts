@@ -14,13 +14,14 @@ router.use('/setup', setupRouter);
 router.post('/data/:cubeId', getData);
 
 async function getData(req: Request, res: Response) {
+    console.log("Enter")
     let cubeId: string = req.params['cubeId'];
     let startTime: string | undefined = req.body['start'] || undefined;
     let endTime: string | undefined = req.body['end'] || undefined;
 
     try {
         let data: Array<Object> = await getSensorData(cubeId, startTime, endTime);
-
+        console.log(data);
         return res.status(200).send(data);
     } catch (error) {
         console.log(error);

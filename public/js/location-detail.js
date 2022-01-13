@@ -31,11 +31,14 @@ window.addEventListener("load", function(event) {
 
 async function requestChartData(){
 
-    let resource = window.location.host;
+    let resource = "http://"
+    resource += window.location.host;
     resource += "/api/data/";
     resource += cubeId;
 
     let data;
+
+    console.log(resource);
 
     try {
         let response = await fetch(resource, {
@@ -56,27 +59,27 @@ async function requestChartData(){
             console.log(data);
         } else {
             data = [
-                {date: new Date("October 13, 2014 11:13:00"), value: 14},
-                {date: new Date("October 13, 2014 11:13:10"), value: 14.5},
-                {date: new Date("October 13, 2014 11:13:20"), value: 15},
-                {date: new Date("October 13, 2014 11:13:30"), value: 16},
-                {date: new Date("October 13, 2014 11:13:40"), value: 18},
-                {date: new Date("October 13, 2014 11:13:50"), value: 22},
-                {date: new Date("October 13, 2014 11:14:00"), value: 27},
-                {date: new Date("October 13, 2014 11:13:10"), value: 35},
+                {timestamp: new Date("October 13, 2014 11:13:00"), data: 14},
+                {timestamp: new Date("October 13, 2014 11:13:10"), data: 14.5},
+                {timestamp: new Date("October 13, 2014 11:13:20"), data: 15},
+                {timestamp: new Date("October 13, 2014 11:13:30"), data: 16},
+                {timestamp: new Date("October 13, 2014 11:13:40"), data: 18},
+                {timestamp: new Date("October 13, 2014 11:13:50"), data: 22},
+                {timestamp: new Date("October 13, 2014 11:14:00"), data: 27},
+                {timestamp: new Date("October 13, 2014 11:14:10"), data: 35},
                 ]
         }
 
     } catch(error) {
         data = [
-        {date: new Date("October 13, 2014 11:13:00"), value: 14},
-        {date: new Date("October 13, 2014 11:13:10"), value: 14.5},
-        {date: new Date("October 13, 2014 11:13:20"), value: 15},
-        {date: new Date("October 13, 2014 11:13:30"), value: 16},
-        {date: new Date("October 13, 2014 11:13:40"), value: 18},
-        {date: new Date("October 13, 2014 11:13:50"), value: 22},
-        {date: new Date("October 13, 2014 11:14:00"), value: 27},
-        {date: new Date("October 13, 2014 11:13:10"), value: 35},
+        {timestamp: new Date("October 13, 2014 11:13:00"), data: 14},
+        {timestamp: new Date("October 13, 2014 11:13:10"), data: 14.5},
+        {timestamp: new Date("October 13, 2014 11:13:20"), data: 15},
+        {timestamp: new Date("October 13, 2014 11:13:30"), data: 16},
+        {timestamp: new Date("October 13, 2014 11:13:40"), data: 18},
+        {timestamp: new Date("October 13, 2014 11:13:50"), data: 22},
+        {timestamp: new Date("October 13, 2014 11:14:00"), data: 27},
+        {timestamp: new Date("October 13, 2014 11:13:10"), data: 35},
         ]
 
         console.log(error);
@@ -92,12 +95,12 @@ function drawChart(data){
     //Define x-axis gaps and labels
     let x = d3.scaleTime()
         .range([0, width])
-        .domain(d3.extent(data, function(d) { return d.date; }))
+        .domain(d3.extent(data, function(d) { return new Date(d.timestamp); }))
 
     //Define y-axis gaps and labels
     let y = d3.scaleLinear()
         .range([height, 0])
-        .domain([0, d3.max(data, function(d) { return d.value; })]);
+        .domain([0, d3.max(data, function(d) { return d.data; })]);
 
     // Append x-axis to chart
     svg.append("g")
@@ -115,8 +118,8 @@ function drawChart(data){
     .attr("stroke", "steelblue")
     .attr("stroke-width", 3)
     .attr("d", d3.line()
-    .x(function(d) { return x(d.date) })
-    .y(function(d) { return y(d.value) })
+    .x(function(d) { return x(new Date(d.timestamp)) })
+    .y(function(d) { return y(d.data) })
     )
 
     console.log("done");

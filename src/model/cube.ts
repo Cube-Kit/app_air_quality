@@ -6,7 +6,7 @@ import format from 'pg-format';
 // Internal imports
 import { pool } from "../index";
 import { checkCubeId } from '../utils/input_check_utils';
-import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
+import { subscribeCubeMQTTTopics } from '../utils/mqtt_utils';
 
 // Base tables
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
@@ -125,7 +125,7 @@ export async function addCube(cubeId: string, location: string): Promise<void> {
             await client.query(addCubeQuery, [cubeId, location]);
 
             //Subscribe to cube topic
-            await subscribeCubeMQTTTopic([cubeId]);
+            await subscribeCubeMQTTTopics([cubeId]);
 
             return resolve();
         } catch(err) {

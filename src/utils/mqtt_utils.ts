@@ -70,12 +70,12 @@ export async function setupMQTT(): Promise<void> {
  * 
  * @param cubeIds ids of [Cubes]{@link types.Cube}
  */
-export async function subscribeCubeMQTTTopic(cubeIds: string[]): Promise<void> {
+export async function subscribeCubeMQTTTopics(cubeIds: string[]): Promise<void> {
     let topics: ISubscriptionMap = {};
     cubeIds.forEach((id) => {
         let topic: string = 'sensor/+/'+id+'/#';
         topics[topic] = {'qos': 2};
-    })
+    });
     
     return subscribeMQTTTopics(topics);
 }

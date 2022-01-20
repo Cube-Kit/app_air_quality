@@ -3,6 +3,7 @@ import { Router, Request, Response } from "express";
 import { Cube, Token } from "../types";
 // External imports
 import express from "express";
+import passport from "passport";
 // Internal imports
 import { addToken, addAppToken, clearTokensTable } from "../model/token";
 import { addCube, clearCubesTable } from "../model/cube";
@@ -12,7 +13,8 @@ import { subscribeDefaultTopics, unsubscribeDefaultTopics } from "../utils/mqtt_
 // Export the router
 export var router: Router = express.Router();
 
-router.post('/', setup);
+router.post('/setup', setup);
+router.post('/reset', passport.authenticate('bearer'), reset);
 
 async function setup(req: Request, res: Response){
     // Persist the server access token
@@ -52,6 +54,20 @@ async function setup(req: Request, res: Response){
     try {
         let app_token: Token = await addAppToken();
         return res.send({appToken: app_token.key});
+    } catch (error) {
+        console.log(error);
+        return res.status(500).end();
+    }
+}
+
+async function reset(req: Request, res: Response) {
+    // Reset tables
+    try {
+        await clearTokensTable();
+        await clearCubesTable();
+        await clearDataTable();
+        await unsubscribeDefaultTopics();
+        return res.status(200).end();
     } catch (error) {
         console.log(error);
         return res.status(500).end();

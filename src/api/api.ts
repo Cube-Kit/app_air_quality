@@ -10,7 +10,7 @@ import { getSensorData } from "../model/sensor_data";
 export var router: Router = express.Router();
 
 // Delegate API-routes to their routers
-router.use('/setup', setupRouter);
+router.use('/', setupRouter);
 router.post('/data/:cubeId', getData);
 
 async function getData(req: Request, res: Response) {

@@ -15,6 +15,7 @@ const getTokenByKeyQuery: string = 'SELECT * FROM tokens WHERE key=$1';
 const addTokenQuery: string = "INSERT INTO tokens (name,key) VALUES ($1, $2) RETURNING *";
 const deleteTokenByKeyQuery: string = "DELETE FROM tokens WHERE key=$1";
 const deleteTokenByNameQuery: string = "DELETE FROM tokens WHERE name=$1";
+const clearTableQuery: string = "DELETE FROM tokens";
 
 export function createTokensTable(): Promise<QueryResult<any>> {
     return pool.query(createTokensTableQuery);
@@ -155,5 +156,18 @@ export function deleteTokenByName(name: string): Promise<void> {
         } catch(err) {
             return reject(err);
         }
+    });
+}
+
+export function clearTokensTable(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        try {
+            pool.query(clearTableQuery);
+            console.log("Cleared tokens table");
+
+            return resolve();
+        } catch(err) {
+            return reject(err);
+        };
     });
 }

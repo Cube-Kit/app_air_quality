@@ -15,15 +15,14 @@
     <div id="content">
         <h1>air quality {{cubeId}}</h1>
 
-        {{!-- TODO add selection input --}}
         <label for="fromTime">From:</label>
         <input type="datetime-local" id="fromTime">
         <label for="toTime">To:</label>
         <input type="datetime-local" id="toTime">
-        <input type="submit" value="Submit">
+        <button id="timeSubmit">Submit</button>
 
         <div id="chart" class="ct-chart"></div>
 
-    </div>z
+    </div>
 
 </body>

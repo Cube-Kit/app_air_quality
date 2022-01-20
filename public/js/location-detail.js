@@ -15,22 +15,33 @@ window.addEventListener("load", function(event)
     //Set input fields to default
     let date = new Date();
     date.setMilliseconds(0);
-    console.log(date.getTimezoneOffset());
+    console.log(date);
     document.getElementById("fromTime").valueAsDate = new Date(date.getTime() - 45 * MS_PER_MINUTE);
     document.getElementById("toTime").valueAsDate = date;
 
     // Dynamically set options
-    let chartConatiner = document.getElementById("chart");
+    let chartContainer = document.getElementById("chart");
 
-    chartOptions.width = (chartConatiner.innerWidth*0.85);
-    chartOptions.height = (chartConatiner.innerHeight*0.85);
+    chartOptions.width = (chartContainer.innerWidth*0.85);
+    chartOptions.height = (chartContainer.innerHeight*0.85);
     chartOptions.showPoint = false;
     chartOptions.lineSmooth = false;
 
-    requestChartData();
+    timeSubmitCallback();
+
+    document.getElementById("timeSubmit").addEventListener("click", timeSubmitCallback);
 });
 
-async function requestChartData(){
+function timeSubmitCallback() {
+
+    let fromDate = document.getElementById("fromTime").valueAsDate;
+    let toDate = document.getElementById("toTime").valueAsDate;
+
+    requestChartData(fromDate, toDate);
+}
+
+
+async function requestChartData(fromDate, toDate) {
 
     let resource = "http://"
     resource += window.location.host;
@@ -43,13 +54,13 @@ async function requestChartData(){
         let response = await fetch(resource, {
             method: "post",
             headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
+              "Accept": "application/json",
+              "Content-Type": "application/json"
             },
           
-            //make sure to serialize your JSON body
             body: JSON.stringify({
-              
+                "start": fromDate,
+                "end": toDate              
             })
         });
 
@@ -74,7 +85,7 @@ async function requestChartData(){
     drawChart(data);
 }
 
-function drawChart(data){
+function drawChart(data) {
 
     let formatData = {labels: [], series: [[]]};
 
@@ -91,7 +102,7 @@ function drawChart(data){
 
     console.log(formatData);
 
-    new Chartist.Line('.ct-chart', formatData, chartOptions);
+    new Chartist.Line(".ct-chart", formatData, chartOptions);
     
     console.log("done");
 }

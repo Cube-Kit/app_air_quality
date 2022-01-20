@@ -18,15 +18,15 @@ export var router: Router = express.Router();
 //     res.render("location-list", {locations: locations});
 // })
 
-router.get('/:cubeId', getLocationDetail);
+router.get('/:cubeId', getCubeDetail);
 
 
-async function getLocationDetail(req: Request, res: Response) {
+async function getCubeDetail(req: Request, res: Response) {
 
     let cubeId: string = req.params["cubeId"];
     try {
         let cube: Cube = await getCubeById(cubeId);
-        res.render("location-detail", {
+        res.render("cube-detail", {
             cubeId: cube.id
         });
     } catch (error) {

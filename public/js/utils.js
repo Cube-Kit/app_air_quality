@@ -91,8 +91,6 @@ async function requestCubeData(fromDate, toDate, cubeId) {
 
             data = await response.json()
 
-            console.log(data);
-
         } else {
 
             console.log(response);

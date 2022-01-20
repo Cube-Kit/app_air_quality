@@ -5,16 +5,17 @@
     <link rel="stylesheet" href="static/css/chartist.css">
     <script src="/static/js/chartist.js"></script>
     <script src="/static/js/utils.js"></script>   
-    <script src="/static/js/cube-detail.js"></script>
+    <script src="/static/js/location-detail.js"></script>
 {{/html_head}}
 
 <body>
 
-    <input id="cubeId" type="hidden" value="{{cubeId}}">
+    <input id="location" type="hidden" value="{{location}}">
+    <input id="cubeIds" type="hidden" value="{{cubeIds}}">
 
 
     <div id="content">
-        <h1>air quality {{cubeId}}</h1>
+        <h1>air quality {{location}}</h1>
 
         <label for="fromTime">From:</label>
         <input type="datetime-local" id="fromTime">

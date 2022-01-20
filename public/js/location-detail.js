@@ -2,14 +2,14 @@
 
 // Declare globals
 let chartOptions = {};
-let cubeId;
+let cubeIds;
 var MS_PER_MINUTE = 60000;
 
 window.addEventListener("load", function(event) 
 {
 
     // Get cubeId from <input> element
-    cubeId = document.getElementById("cubeId").value;
+    cubeIds = document.getElementById("cubeIds").value;
 
 
     //Set input fields to default
@@ -46,8 +46,12 @@ function timeSubmitCallback() {
 // Combine needed data for the chart
 async function requestChartData(fromDate, toDate) {
 
-    let data = [requestCubeData(fromDate, toDate, cubeId)];
+    let data = [];
 
+    cubeIds.forEach((cubeId, index) => {
+        data.push(await requestCubeData(fromDate, toDate, cubeId));
+    });
+    
     console.log(data);
     
     return data;

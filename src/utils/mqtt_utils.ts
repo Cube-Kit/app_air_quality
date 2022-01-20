@@ -81,6 +81,21 @@ export async function subscribeCubeMQTTTopics(cubeIds: string[]): Promise<void> 
 }
 
 /**
+ * Wrapper to unsubscribe from the MQTT topics for existing cubes.
+ * 
+ * @param cubeIds ids of [Cubes]{@link types.Cube}
+ */
+ export async function unsubscribeCubeMQTTTopics(cubeIds: string[]): Promise<void> {
+    let topics: Array<string> = [];
+    cubeIds.forEach((id: string) => {
+        let topic: string = 'sensor/+/'+id+'/#';
+        topics.push(topic);
+    });
+    
+    return unsubscribeMQTTTopics(topics);
+}
+
+/**
  * Subscribe to specified topics.
  * 
  * @param topics topics to be subscribed to
@@ -99,6 +114,30 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
                     console.log(`Subscribed to ${value.topic} with QoS level ${value.qos}.`);
                 })
 
+                resolve();
+            }
+        });
+    });
+}
+
+/**
+ * Unsubscribe from specified topics.
+ * 
+ * @param topics topics to be unsubscribed from
+ */
+ function unsubscribeMQTTTopics(topics: Array<string>): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if (topics.length === 0) {
+            resolve();
+        }
+        
+        //Unsubscribe from topics
+        mqttClient.unsubscribe(topics, function(err: Error) {
+            if(err) {
+                console.log(err);
+                reject(err);
+            } else {
+                console.log("MQTT: unsubscribed from: " + topics);
                 resolve();
             }
         });

@@ -14,7 +14,7 @@ const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID
 // Manage cubes
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
-const getCubesWithLocationQuery: string = 'SELECT * FROM cubes WHERE location=$2';
+const getCubesWithLocationQuery: string = 'SELECT * FROM cubes WHERE location=$1';
 const addCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
 const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';

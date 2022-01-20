@@ -14,6 +14,7 @@ const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID
 // Manage cubes
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
+const getCubesWithLocationQuery: string = 'SELECT * FROM cubes WHERE location=$2';
 const addCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
 const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
@@ -47,6 +48,33 @@ export function getCubes(): Promise<Array<Cube>> {
             return resolve(cubes);
         } catch(err) {
             return reject(err);
+        }
+    });
+}
+
+export function getCubesByLocation(location: string): Promise<Array<Cube>> {
+    return new Promise(async (resolve, reject) => {
+        //Check input
+        try {
+            if (location === undefined || !location.trim()) {
+                throw(new Error("location is undefined or empty"));
+            }
+        } catch(err) {
+            return reject(err);
+        }
+
+        try {
+            let res: QueryResult = await pool.query(getCubesWithLocationQuery, [location]);
+
+            let cubes: Array<Cube> = [];
+            res.rows.forEach((cube: Cube) => {
+                cube.location = cube.location.trim();
+                cubes.push(cube);
+            });
+
+            resolve(cubes);
+        } catch(error) {
+            reject(error);
         }
     });
 }

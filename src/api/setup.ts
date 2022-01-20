@@ -24,7 +24,7 @@ async function setup(req: Request, res: Response){
             return res.status(500).send("Already registered to a server.");
         } else {
             console.log(error);
-            return res.status(500);
+            return res.status(500).end();
         }
     }
 
@@ -54,6 +54,6 @@ async function setup(req: Request, res: Response){
         return res.send({appToken: app_token.key});
     } catch (error) {
         console.log(error);
-        return res.status(500);
+        return res.status(500).end();
     }
 }

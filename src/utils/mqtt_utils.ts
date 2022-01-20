@@ -45,7 +45,7 @@ export async function setupMQTT(): Promise<void> {
         }]);
 
         mqttClient.on('connect', async function() {
-            console.log('connected to MQTT server');
+            console.log('connected to MQTT server ' + mqttUrl + ":" + mqttPort);
 
             //Set event listeners
             mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
@@ -66,10 +66,7 @@ export async function setupMQTT(): Promise<void> {
 
                 // Subscribe to sensor data of existing cubes
                 let cubes: Cube[] = await getCubes();
-                let ids: string[] = [];
-                cubes.forEach((cube: Cube) => {
-                    ids.push(cube.id);
-                });
+                let ids: string[] = cubes.map((cube: Cube) => cube.id);
                 subscribeCubeMQTTTopics(ids);
             }
         });
@@ -176,7 +173,7 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
  * @param options options of that event
  */
 function logMQTTEvent(event: string, options: Array<any> = []): void {
-    // console.log(`Event emitted: ${event}`);
+    //console.log(`Event emitted: ${event}`);
 }
 
 /**
@@ -243,8 +240,11 @@ async function handleCubeData(topic: Array<string>, message: string) {
  * @param topic topic of the message formatted like this: sensor/sensor_type/cubeId
  */
 function handleSensorData(topic: Array<string>, message: string): void {
-    if (topic[1] === "co2") {
-        persistSensorData(topic[2], message)
+    if (topic[1] === "bme680") {
+
+        let data = JSON.parse(message);
+
+        persistSensorData(topic[2], data.iaq)
             .catch((err: Error) => {
                 console.log(err.stack);
             });

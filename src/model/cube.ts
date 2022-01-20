@@ -6,7 +6,7 @@ import format from 'pg-format';
 // Internal imports
 import { pool } from "../index";
 import { checkCubeId } from '../utils/input_check_utils';
-import { subscribeCubeMQTTTopic } from '../utils/mqtt_utils';
+import { subscribeCubeMQTTTopics, unsubscribeCubeMQTTTopics } from '../utils/mqtt_utils';
 
 // Base tables
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
@@ -14,9 +14,11 @@ const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID
 // Manage cubes
 const getCubesQuery: string = 'SELECT * FROM cubes';
 const getCubeWithIdQuery: string = 'SELECT * FROM cubes WHERE id=$1';
+const getCubesWithLocationQuery: string = 'SELECT * FROM cubes WHERE location=$2';
 const addCubeQuery: string = "INSERT INTO cubes (id, location) VALUES ($1, $2)";
 const updateCubeWithIdQuery: string = 'UPDATE cubes SET %I=%L WHERE id=%L';
 const deleteCubeWithIdQuery: string = 'DELETE FROM cubes WHERE id=$1';
+const clearTableQuery: string = 'DELETE FROM cubes RETURNING *';
 
 export async function createCubeTables(): Promise<void> {
     return new Promise(async (resolve, reject) => {
@@ -51,7 +53,34 @@ export function getCubes(): Promise<Array<Cube>> {
     });
 }
 
-export function getCubeById(cubeId: string): Promise<Cube> {
+export function getCubesByLocation(location: string): Promise<Array<Cube>> {
+    return new Promise(async (resolve, reject) => {
+        //Check input
+        try {
+            if (location === undefined || !location.trim()) {
+                throw(new Error("location is undefined or empty"));
+            }
+        } catch(err) {
+            return reject(err);
+        }
+
+        try {
+            let res: QueryResult = await pool.query(getCubesWithLocationQuery, [location]);
+
+            let cubes: Array<Cube> = [];
+            res.rows.forEach((cube: Cube) => {
+                cube.location = cube.location.trim();
+                cubes.push(cube);
+            });
+
+            resolve(cubes);
+        } catch(error) {
+            reject(error);
+        }
+    });
+}
+
+export function getCubeWithId(cubeId: string): Promise<Cube> {
     return new Promise(async (resolve, reject) => {
         //Check cubeId
         try {
@@ -97,7 +126,7 @@ export async function addCube(cubeId: string, location: string): Promise<void> {
             await client.query(addCubeQuery, [cubeId, location]);
 
             //Subscribe to cube topic
-            await subscribeCubeMQTTTopic(cubeId, 2);
+            await subscribeCubeMQTTTopics([cubeId]);
 
             return resolve();
         } catch(err) {
@@ -120,11 +149,11 @@ export function updateCubeWithId(cubeId: string, variables: CubeVariables): Prom
 
         try {
             //Check if cube exists
-            await getCubeById(cubeId);
+            await getCubeWithId(cubeId);
             //Update cube location
             await pool.query(format(updateCubeWithIdQuery, 'location', variables.location, cubeId));
 
-            return resolve(getCubeById(cubeId));
+            return resolve(getCubeWithId(cubeId));
         } catch(err) {
             return reject(err);
         }
@@ -138,6 +167,28 @@ export function deleteCubeWithId(cubeId: string): Promise<void> {
 
         try {
             pool.query(deleteCubeWithIdQuery, [cubeId]);
+
+            return resolve();
+        } catch(err) {
+            return reject(err);
+        };
+    });
+}
+
+export function clearCubesTable(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res: QueryResult = await pool.query(clearTableQuery);
+            console.log("Cleared cubes table");
+
+            let cubes: Array<Cube> = res.rows;
+            let cubeIds: Array<string> = [];
+
+            cubes.forEach((cube: Cube) => {
+                cubeIds.push(cube.id);
+            })
+
+            await unsubscribeCubeMQTTTopics(cubeIds);
 
             return resolve();
         } catch(err) {

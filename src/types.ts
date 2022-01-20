@@ -5,7 +5,6 @@ export interface Token {
 
 export interface Cube {
     id: string,
-    ip: string,
     location: string
 }
 

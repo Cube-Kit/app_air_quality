@@ -4,7 +4,7 @@ import { Cube } from "../types";
 // External imports
 import express from "express";
 import passport from "passport";
-import { getCubeById } from "../model/cube";
+import { getCubeWithId } from "../model/cube";
 // Internal imports
 
 // Export the router
@@ -25,7 +25,7 @@ async function getCubeDetail(req: Request, res: Response) {
 
     let cubeId: string = req.params["cubeId"];
     try {
-        let cube: Cube = await getCubeById(cubeId);
+        let cube: Cube = await getCubeWithId(cubeId);
         res.render("cube-detail", {
             cubeId: cube.id
         });

@@ -10,6 +10,8 @@ const createDataTableQuery: string = "CREATE TABLE IF NOT EXISTS data (id SERIAL
 const getDataQuery: string = "SELECT * FROM data";
 // Persist sensor data
 const persistDataQuery: string = "INSERT INTO data (cube_id, timestamp, data) VALUES ($1, $2, $3)";
+// Clear sensor data
+const clearTableQuery: string = "DELETE FROM data";
 
 export function createSensorDataTable(): Promise<void> {
     return new Promise(async (resolve, reject) => {
@@ -140,5 +142,18 @@ export function persistSensorData(cubeId: string, data: string): Promise<void> {
         } catch (err) {
             return reject(err);
         }
+    });
+}
+
+export function clearDataTable(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        try {
+            pool.query(clearTableQuery);
+            console.log("Cleared data table");
+
+            return resolve();
+        } catch(err) {
+            return reject(err);
+        };
     });
 }

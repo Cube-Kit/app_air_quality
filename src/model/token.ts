@@ -9,31 +9,29 @@ import { checkTokenKeyValidity } from "../utils/input_check_utils";
 
 // Token table
 const createTokensTableQuery: string = "CREATE TABLE IF NOT EXISTS tokens (name CHAR(64) PRIMARY KEY, key CHAR(32) UNIQUE NOT NULL)";
-const getTokensQuery: string = 'SELECT * FROM tokens';
 const getTokenByNameQuery: string = 'SELECT * FROM tokens WHERE name=$1';
 const getTokenByKeyQuery: string = 'SELECT * FROM tokens WHERE key=$1';
 const addTokenQuery: string = "INSERT INTO tokens (name,key) VALUES ($1, $2) RETURNING *";
 const deleteTokenByKeyQuery: string = "DELETE FROM tokens WHERE key=$1";
 const deleteTokenByNameQuery: string = "DELETE FROM tokens WHERE name=$1";
+const clearTableQuery: string = "DELETE FROM tokens";
 
 export function createTokensTable(): Promise<QueryResult<any>> {
     return pool.query(createTokensTableQuery);
 }
 
-export function getTokens(): Promise<Array<Token>> {
+export function checkForServerToken(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
         try {
-            let res: QueryResult = await pool.query(getTokensQuery);
+            let serverRes: QueryResult = await pool.query(getTokenByNameQuery, ["server"]);
 
-            let tokens: Array<Token> = res.rows;
-
-            tokens.forEach(token => {
-                token.name = token.name.trim()
-            })
-
-            return resolve(tokens);
-        } catch(err) {
-            return reject(err);
+            if (serverRes.rows.length > 0) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        } catch(error) {
+            reject(error);
         }
     });
 }
@@ -155,5 +153,18 @@ export function deleteTokenByName(name: string): Promise<void> {
         } catch(err) {
             return reject(err);
         }
+    });
+}
+
+export function clearTokensTable(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        try {
+            pool.query(clearTableQuery);
+            console.log("Cleared tokens table");
+
+            return resolve();
+        } catch(err) {
+            return reject(err);
+        };
     });
 }

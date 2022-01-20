@@ -4,8 +4,10 @@ import { Cube, Token } from "../types";
 // External imports
 import express from "express";
 // Internal imports
-import { addToken, addAppToken } from "../model/token";
-import { addCube } from "../model/cube";
+import { addToken, addAppToken, clearTokensTable } from "../model/token";
+import { addCube, clearCubesTable } from "../model/cube";
+import { clearDataTable } from "../model/sensor_data";
+import { subscribeDefaultTopics, unsubscribeDefaultTopics } from "../utils/mqtt_utils";
 
 // Export the router
 export var router: Router = express.Router();
@@ -24,6 +26,16 @@ async function setup(req: Request, res: Response){
             console.log(error);
             return res.status(500);
         }
+    }
+
+    // Setup app for use
+    try {
+        await clearCubesTable();
+        await clearDataTable();
+        await subscribeDefaultTopics();
+    } catch (error) {
+        console.log(error);
+        return res.status(500).end();
     }
 
     // Add cubes to app

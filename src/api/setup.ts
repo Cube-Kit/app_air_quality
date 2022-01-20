@@ -53,6 +53,7 @@ async function setup(req: Request, res: Response){
     // Create an access token for the server to the app
     try {
         let app_token: Token = await addAppToken();
+        console.log("Connected to server");
         return res.send({appToken: app_token.key});
     } catch (error) {
         console.log(error);
@@ -67,6 +68,7 @@ async function reset(req: Request, res: Response) {
         await clearCubesTable();
         await clearDataTable();
         await unsubscribeDefaultTopics();
+        console.log("Disconnected from server");
         return res.status(200).end();
     } catch (error) {
         console.log(error);

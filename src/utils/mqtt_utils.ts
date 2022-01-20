@@ -12,11 +12,20 @@ import mqtt from "mqtt";
 //internal imports
 import { addCube, deleteCubeWithId, getCubes, updateCubeWithId } from "../model/cube";
 import { persistSensorData } from "../model/sensor_data";
+import { checkForServerToken } from "../model/token";
 
 /**
  * Holds the connection to the MQTT broker.
  */
 var mqttClient: MqttClient;
+/**
+ * Holds the default topics, that should be subscribed to
+ */
+var defaultTopics: ISubscriptionMap = {
+    'cube/#': {
+        'qos': 2,
+    }
+};
 
 /**
  * Sets up the connection to the MQTT broker and subscribes to the MQTT topics of
@@ -49,20 +58,36 @@ export async function setupMQTT(): Promise<void> {
             mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
             mqttClient.on('message', handleMQTTMessage);
             
-            // Set default listeners
-            let topics: ISubscriptionMap = {};
-            topics['cube/#'] = {'qos': 2};
-            subscribeMQTTTopics(topics);
+            // Only subscribe to topics, if the app is setup
+            let setup: boolean = await checkForServerToken();
+            if (setup) {
+                // Set default topics
+                subscribeDefaultTopics();
 
-            //Subscribe to sensor data of existing cubes
-            let cubes: Cube[] = await getCubes();
-            let ids: string[] = [];
-            cubes.forEach((cube: Cube) => {
-                ids.push(cube.id);
-            });
-            subscribeCubeMQTTTopic(ids);
+                // Subscribe to sensor data of existing cubes
+                let cubes: Cube[] = await getCubes();
+                let ids: string[] = [];
+                cubes.forEach((cube: Cube) => {
+                    ids.push(cube.id);
+                });
+                subscribeCubeMQTTTopics(ids);
+            }
         });
     });
+}
+
+/**
+ * Wrapper to subscribe to the default MQTT topics.
+ */
+export async function subscribeDefaultTopics(): Promise<void> {
+    return subscribeMQTTTopics(defaultTopics);
+}
+
+/**
+ * Wrapper to unsubscribe from the default MQTT topics.
+ */
+ export async function unsubscribeDefaultTopics(): Promise<void> {
+    return unsubscribeMQTTTopics(Object.keys(defaultTopics));
 }
 
 /**
@@ -111,7 +136,7 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
 
             if (granted) {
                 granted.forEach(function(value: ISubscriptionGrant) {
-                    console.log(`Subscribed to ${value.topic} with QoS level ${value.qos}.`);
+                    console.log(`MQTT: Subscribed to ${value.topic} with QoS level ${value.qos}.`);
                 })
 
                 resolve();

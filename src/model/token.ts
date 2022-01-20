@@ -20,6 +20,22 @@ export function createTokensTable(): Promise<QueryResult<any>> {
     return pool.query(createTokensTableQuery);
 }
 
+export function checkForServerToken(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let serverRes: QueryResult = await pool.query(getTokenByNameQuery, ["server"]);
+
+            if (serverRes.rows.length > 0) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        } catch(error) {
+            reject(error);
+        }
+    });
+}
+
 export function getAppToken(): Promise<Token> {
     return new Promise(async (resolve, reject) => {
         try {

@@ -8,8 +8,15 @@ var MS_PER_MINUTE = 60000;
 window.addEventListener("load", function(event) 
 {
 
-    // Get cubeId from <input> element
-    cubeIds = document.getElementById("cubeIds").value;
+    // Get cubeIds from <input> element
+    cubeIds = document.getElementById("cubeIds").value.split(",");
+
+    // Get cubeIds from <input> element
+    thresholds = document.getElementById("thresholds").value.split(",");
+
+
+
+    console.log(thresholds);
 
 
     //Set input fields to default
@@ -26,6 +33,7 @@ window.addEventListener("load", function(event)
     chartOptions.height = (chartContainer.innerHeight*0.85);
     chartOptions.showPoint = false;
     chartOptions.lineSmooth = false;
+    chartOptions.showGrid = true;
 
     // First time call for default settings
     timeSubmitCallback();
@@ -35,22 +43,25 @@ window.addEventListener("load", function(event)
 });
 
 // Callback for submit button
-function timeSubmitCallback() {
+async function timeSubmitCallback() {
 
     let fromDate = document.getElementById("fromTime").valueAsDate;
     let toDate = document.getElementById("toTime").valueAsDate;
 
-    drawChart(formatData(requestChartData(fromDate, toDate)));
+    drawChart(formatData(await requestChartData(fromDate, toDate, cubeIds), thresholds));
 }
 
 // Combine needed data for the chart
-async function requestChartData(fromDate, toDate) {
+async function requestChartData(fromDate, toDate, cubeIds) {
 
     let data = [];
 
-    cubeIds.forEach((cubeId, index) => {
+    console.log(cubeIds);
+
+    for (cubeId of cubeIds)
+    {
         data.push(await requestCubeData(fromDate, toDate, cubeId));
-    });
+    }
     
     console.log(data);
     

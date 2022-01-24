@@ -15,12 +15,13 @@ function formatXLabels(data)
 }
 
 // Format data to be compatible with chartist.js
-function formatData(data){
+function formatData(data, thresholds){
 
     let dateSet = new Set();
     let output = {labels: [], series: []};
 
     try{
+        // collect all occurring dates to a set
         data.forEach((outerElement, outerIndex) =>{
             outerElement.forEach((innerElement, innerIndex) =>{
 
@@ -31,23 +32,50 @@ function formatData(data){
 
         let dateArray = Array.from(dateSet);
 
+        // sort set
         dateArray.sort((date1, date2) => date1.valueOf() - date2.valueOf());
 
+        // add thresholds as graphs to be displayed
+        let thresholdCount = thresholds.length;
+
+        chartOptions.series = new Object();
+
+        thresholds.forEach((threshold, thresholdIndex) =>{
+
+            output.series.push({
+                name: ("threshold_" + thresholdIndex),
+                data: []});
+
+            chartOptions.series["threshold_" + thresholdIndex] = {
+                showArea: true,
+                showLine: true,
+                showPoint: false,
+            }
+
+            dateArray.forEach((date, dateIndex) =>{
+
+                output.series[thresholdIndex].data.push(thresholds[thresholdCount-thresholdIndex-1]);
+            });
+        });
+
+        // add cube-data for each timestamp compensating for holes in the data
         data.forEach((cubeData, cubeIndex) =>{
 
-            output.series.push([]);
+            output.series.push({
+                name: ("cube_" + cubeIndex),
+                data: []});
 
             dateArray.forEach((date, dateIndex) =>{
 
                 let filtered = cubeData.filter(e => e.timestamp == date)
 
-                if (filtered.length === 0){
+                if (filtered.length == 0){
 
-                    output.series.push("null");
+                    output.series[cubeIndex + thresholdCount].data.push("null");
 
                 } else {
 
-                    output.series[cubeIndex].push(filtered[0].data);
+                    output.series[cubeIndex + thresholdCount].data.push(filtered[0].data);
                 }
             });
         });

@@ -3,6 +3,7 @@
 // Declare globals
 let chartOptions = {};
 let cubeId;
+let thresholds;
 var MS_PER_MINUTE = 60000;
 
 window.addEventListener("load", function(event) 
@@ -10,7 +11,10 @@ window.addEventListener("load", function(event)
 
     // Get cubeId from <input> element
     cubeId = document.getElementById("cubeId").value;
-
+    // Get cubeIds from <input> element
+    thresholds = document.getElementById("thresholds").value.split(",");
+    thresholds = [ 50, 100, 150 ]
+    // thresholds.push(500);
 
     //Set input fields to default
     let date = new Date();
@@ -26,6 +30,7 @@ window.addEventListener("load", function(event)
     chartOptions.height = (chartContainer.innerHeight*0.85);
     chartOptions.showPoint = false;
     chartOptions.lineSmooth = false;
+    chartOptions.showGrid = false;
 
     // First time call for default settings
     timeSubmitCallback();
@@ -35,20 +40,18 @@ window.addEventListener("load", function(event)
 });
 
 // Callback for submit button
-function timeSubmitCallback() {
+async function timeSubmitCallback() {
 
     let fromDate = document.getElementById("fromTime").valueAsDate;
     let toDate = document.getElementById("toTime").valueAsDate;
 
-    drawChart(formatData(requestChartData(fromDate, toDate)));
+    drawChart(formatData(await requestChartData(fromDate, toDate), thresholds));
 }
 
 // Combine needed data for the chart
 async function requestChartData(fromDate, toDate) {
 
-    let data = [requestCubeData(fromDate, toDate, cubeId)];
-
-    console.log(data);
+    let data = [await requestCubeData(fromDate, toDate, cubeId)];
     
     return data;
 }

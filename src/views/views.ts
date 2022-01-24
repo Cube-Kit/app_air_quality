@@ -9,6 +9,13 @@ import { getCubeWithId, getCubesByLocation } from "../model/cube";
 
 // Export the router
 export var router: Router = express.Router();
+// Thresholds for air quality levels
+const qualityThresholdString: string = process.env.AirQualityThresholds || "50 100 150";
+const qualityThresholds: Array<number> = qualityThresholdString.split(" ").map((string) => {
+    return parseInt(string);
+});
+
+console.log(qualityThresholds);
 
 // Authenticate token
 // router.use('/', passport.authenticate('bearer'));
@@ -29,7 +36,8 @@ async function getCubeDetail(req: Request, res: Response) {
     try {
         let cube: Cube = await getCubeWithId(cubeId);
         res.render("cube-detail", {
-            cubeId: cube.id
+            cubeId: cube.id,
+            thresholds: qualityThresholds
         });
     } catch (error) {
         res.status(500).end();
@@ -41,14 +49,15 @@ async function getLocationDetail(req: Request, res: Response) {
     let location: string = req.params["location"];
     try {
         let cubes: Array<Cube> = await getCubesByLocation(location);
-        console.log("exit");
         let cubeIds: Array<string> = []
         cubes.forEach(e => {
             cubeIds.push(e.id);
         }); 
+        console.log(cubeIds);
         res.render("location-detail", {
             cubeIds: cubeIds,
-            location: location
+            location: location,
+            thresholds: qualityThresholds
         });
     } catch (error) {
         console.log(error);

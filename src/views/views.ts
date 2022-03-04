@@ -24,7 +24,9 @@ console.log(qualityThresholds);
 //     let locations = getLocations();
 //     res.render("location-list", {locations: locations});
 // })
-
+router.get('/', (req, res) => {
+    res.send("hello World");
+})
 router.get('/cube/:cubeId', getCubeDetail);
 router.get('/location/:location', getLocationDetail);
 

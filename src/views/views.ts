@@ -4,7 +4,7 @@ import { Cube } from "../types";
 // External imports
 import express from "express";
 import passport from "passport";
-import { getCubeWithId, getCubesByLocation } from "../model/cube";
+import { getCubeWithId, getCubesByLocation, getCubes, compareCubes } from "../model/cube";
 // Internal imports
 
 // Export the router
@@ -25,6 +25,7 @@ console.log(qualityThresholds);
 //     res.render("location-list", {locations: locations});
 // })
 
+router.get('/', getCubeList);
 router.get('/cube/:cubeId', getCubeDetail);
 router.get('/location/:location', getLocationDetail);
 
@@ -55,6 +56,28 @@ async function getLocationDetail(req: Request, res: Response) {
         }); 
         console.log(cubeIds);
         res.render("location-detail", {
+            cubeIds: cubeIds,
+            location: location,
+            thresholds: qualityThresholds
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).end();
+    }
+}
+
+async function getCubeList(req:Request, res:Response) {
+    let location: string = req.params["location"];
+    try {
+        let cubes: Array<Cube> = await getCubes();
+        console.log(cubes);
+        let cubeIds: Array<string> = []
+        cubes.forEach(e => {
+            cubeIds.push(e.id);
+        }); 
+        console.log(cubeIds);
+        res.render("cubes-list", {
+            cubes: cubes,
             cubeIds: cubeIds,
             location: location,
             thresholds: qualityThresholds

@@ -56,6 +56,10 @@ app.use(helmet({
         },
     },
     frameguard: false,
+    crossOriginEmbedderPolicy: true,
+    crossOriginResourcePolicy: {
+        policy: "cross-origin"
+    }
 }));
 app.use(session({
     secret: process.env.SESSIONSECRET || 'secret',

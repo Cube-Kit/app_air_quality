@@ -5,7 +5,7 @@
  */
 
 //type imports
-import { MqttClient, ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
+import { MqttClient, IClientOptions, ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
 import { Cube } from "../types";
 //external imports
 import mqtt from "mqtt";
@@ -39,10 +39,11 @@ export async function setupMQTT(): Promise<void> {
         let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
         let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
         //Connect to broker
-        mqttClient = mqtt.connect([{
+        let clientOptions: IClientOptions = {
             host: 'mqtt://'+mqttUrl,
             port: mqttPort
-        }]);
+        };
+        let mqttClient: MqttClient = mqtt.connect(clientOptions);
 
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server');

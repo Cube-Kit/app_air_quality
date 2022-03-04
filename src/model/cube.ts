@@ -196,3 +196,7 @@ export function clearCubesTable(): Promise<void> {
         };
     });
 }
+
+export function compareCubes(a: Cube, b:Cube):number {
+    return a.location.localeCompare(b.location, undefined, {numeric: true});
+}

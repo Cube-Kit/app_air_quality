@@ -1,0 +1,38 @@
+{{!Add html-head}}
+{{#> html_head}}
+    {{!Add custom scripts}}
+    {{!-- <link rel="stylesheet" href="/static/css/cubes-list.css"> --}}
+{{/html_head}}
+
+<body>
+    {{!Fill content}}
+    <div id="content">
+
+        <h1>Cubes</h1>
+    
+            <table>
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
+                <thead>
+                    <th>Location</th>
+                    <th>Id</th>
+                    <th></th>
+                </thead>
+                {{#each cubes}}
+                    <tr>
+                        <td>{{this.location}}</td>
+                        <td>{{this.id}}</td>
+                        <td>
+                            <a href="cubes/{{this.id}}">
+                                <i class="fas fa-edit fa-lg fa-button"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {{/each}}
+            </table>
+
+</body>
+</html>

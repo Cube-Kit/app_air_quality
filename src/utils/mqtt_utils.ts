@@ -43,7 +43,7 @@ export async function setupMQTT(): Promise<void> {
             host: 'mqtt://'+mqttUrl,
             port: mqttPort
         };
-        let mqttClient: MqttClient = mqtt.connect(clientOptions);
+        mqttClient = mqtt.connect(clientOptions);
 
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server');

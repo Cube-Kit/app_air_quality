@@ -33,11 +33,13 @@ var defaultTopics: ISubscriptionMap = {
  */
 export async function setupMQTT(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        console.log('attempting MQTT server connection ...');
 
         //Get broker address
         let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
         let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
+
+        console.log('attempting MQTT server connection to: ' + mqttUrl + ":" + mqttPort);
+
         //Connect to broker
         let clientOptions: IClientOptions = {
             host: 'mqtt://'+mqttUrl,
@@ -48,16 +50,7 @@ export async function setupMQTT(): Promise<void> {
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server');
 
-            //Set event listeners
-            mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
-            mqttClient.on('close', () => logMQTTEvent('Close'));
-            mqttClient.on('disconnect', () => logMQTTEvent('Disconnect'));
-            mqttClient.on('offline', () => logMQTTEvent('Offline'));
-            mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
-            mqttClient.on('end', () => logMQTTEvent('End'));
-            mqttClient.on('packetsend', () => logMQTTEvent('Packetsend'));
-            mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
-            mqttClient.on('message', handleMQTTMessage);
+            
             
             // Only subscribe to topics, if the app is setup
             let setup: boolean = await checkForServerToken();
@@ -74,6 +67,17 @@ export async function setupMQTT(): Promise<void> {
                 subscribeCubeMQTTTopics(ids);
             }
         });
+        
+        //Set event listeners
+        mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
+        mqttClient.on('close', () => logMQTTEvent('Close'));
+        mqttClient.on('disconnect', () => logMQTTEvent('Disconnect'));
+        mqttClient.on('offline', () => logMQTTEvent('Offline'));
+        mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
+        mqttClient.on('end', () => logMQTTEvent('End'));
+        mqttClient.on('packetsend', () => logMQTTEvent('Packetsend'));
+        mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
+        mqttClient.on('message', handleMQTTMessage);
     });
 }
 

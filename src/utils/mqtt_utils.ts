@@ -5,7 +5,7 @@
  */
 
 //type imports
-import { MqttClient, IClientOptions, ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
+import { MqttClient, IClientOptions, ISubscriptionMap, IPublishPacket, ISubscriptionGrant, QoS } from "mqtt";
 import { ActuatorData, Cube } from "../types";
 //external imports
 import mqtt from "mqtt";

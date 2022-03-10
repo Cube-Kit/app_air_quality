@@ -174,7 +174,7 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
     });
 }
 
-export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: number, timeToTarget?: number) {
+export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: object, timeToTarget?: number) {
     let topic: string = `actuator/${actuator}/${cubeId}/${location}`;
 
     let data: ActuatorData = {
@@ -235,7 +235,7 @@ async function handleCubeData(topic: Array<string>, message: string) {
     switch (topic[1]) {
         case 'create':
             try {
-                await addCube(cube.id, cube.location);
+                await addCube(cube);
                 console.log("added cube "+ cube.id +" at location " + cube.location);
             } catch (error) {
                 console.log(error);

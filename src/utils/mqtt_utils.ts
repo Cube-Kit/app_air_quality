@@ -6,7 +6,7 @@
 
 //type imports
 import { MqttClient, IClientOptions, ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
-import { Cube } from "../types";
+import { ActuatorData, Cube } from "../types";
 //external imports
 import mqtt from "mqtt";
 //internal imports
@@ -172,6 +172,26 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
             }
         });
     });
+}
+
+export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: number, timeToTarget?: number) {
+    let topic: string = `actuator/${actuator}/${cubeId}/${location}`;
+
+    let data: ActuatorData = {
+        "value": targetValue
+    }
+    if (timeToTarget !== undefined) {
+        data.time = timeToTarget;
+    }
+
+    let message: string = JSON.stringify(data);
+
+    publishMQTTMessage(topic, message, 2);
+}
+
+function publishMQTTMessage(topic: string, message: string, qos: QoS) {
+    console.log("MQTT: Published to " + topic)
+    mqttClient.publish(topic, message, {qos});
 }
 
 /**

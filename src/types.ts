@@ -11,3 +11,8 @@ export interface Cube {
 export interface CubeVariables {
     location: string
 }
+
+export interface ActuatorData {
+    value: number,
+    time?: number
+}

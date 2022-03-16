@@ -42,7 +42,7 @@ export async function setupMQTT(): Promise<void> {
 
         //Connect to broker
         let clientOptions: IClientOptions = {
-            host: 'mqtt://'+mqttUrl,
+            host: mqttUrl,
             port: mqttPort
         };
         mqttClient = mqtt.connect(clientOptions);

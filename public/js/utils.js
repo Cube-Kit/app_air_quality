@@ -2,13 +2,25 @@
 function formatXLabels(data)
 {
     let output = [];
+    let step = Math.round(data.length / 10);
+    console.log(step);
     data.forEach((element, index) => {
-        let date = new Date(element);
 
-        let xLabel =    (index == 0 || date.getMinutes() == 0) ? date.getHours().toString().padStart(2, '0') : "";
-        xLabel +=       (index == 0 || date.getSeconds() == 0) ? ":" + date.getMinutes().toString().padStart(2, '0') : "";
-        xLabel +=       ":" + date.getSeconds().toString().padStart(2, '0');
+        let xLabel = "";
 
+        if(index % step == 0) {
+            let date = new Date(element);
+
+            xLabel = date.getHours().toString().padStart(2, '0') + ":" + 
+                date.getMinutes().toString().padStart(2, '0') + ":" +
+                date.getSeconds().toString().padStart(2, '0');
+
+            // xLabel =    (index == 0 || date.getMinutes() == 0) ? date.getHours().toString().padStart(2, '0') : "";
+            // xLabel +=       (index == 0 || date.getSeconds() == 0) ? ":" + date.getMinutes().toString().padStart(2, '0') : "";
+            // xLabel +=       ":" + date.getSeconds().toString().padStart(2, '0');
+            
+            
+        }        
         output.push(xLabel);
     });
     return output;
@@ -101,6 +113,18 @@ async function requestCubeData(fromDate, toDate, cubeId) {
 
     let data = [];
 
+    console.log({
+        method: "post",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+      
+        body: {
+            "start": fromDate,
+            "end": toDate              
+        }});
+
     try {
         let response = await fetch(resource, {
             method: "post",
@@ -130,4 +154,9 @@ async function requestCubeData(fromDate, toDate, cubeId) {
     }
 
     return data;
+}
+
+function callSubPage(subUrl) {
+    let hostname = window.location.hostname;
+    window.location = hostname.concat(subUrl);
 }

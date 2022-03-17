@@ -71,15 +71,27 @@ async function getCubeList(req:Request, res:Response) {
     try {
         let cubes: Array<Cube> = await getCubes();
         console.log(cubes);
-        let cubeIds: Array<string> = []
+        let locationSet: Set<string> = new Set();
+        let locations: Array<object> = [];
         cubes.forEach(e => {
-            cubeIds.push(e.id);
+            locationSet.add(e.location);
         }); 
-        console.log(cubeIds);
+
+        locationSet.forEach(l => {
+            let location = {"name": l, "cubes": new Array()};
+            cubes.forEach(e => {
+                if (l === e.location) {
+                    location.cubes.push(e);
+                }
+            })
+            locations.push(location);
+        });
+
+        console.log(locations);
+
         res.render("cubes-list", {
             cubes: cubes,
-            cubeIds: cubeIds,
-            location: location,
+            locations: locations,
             thresholds: qualityThresholds
         });
     } catch (error) {

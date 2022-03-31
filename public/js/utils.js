@@ -3,7 +3,6 @@ function formatXLabels(data)
 {
     let output = [];
     let step = Math.round(data.length / 10);
-    console.log(step);
     data.forEach((element, index) => {
 
         let xLabel = "";
@@ -94,8 +93,6 @@ function formatData(data, thresholds){
 
         output.labels = formatXLabels(dateArray);
 
-        console.log(output);
-
     } catch(error){
         console.error(error);
     }
@@ -112,18 +109,6 @@ async function requestCubeData(fromDate, toDate, cubeId) {
     resource += cubeId;
 
     let data = [];
-
-    console.log({
-        method: "post",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-      
-        body: {
-            "start": fromDate,
-            "end": toDate              
-        }});
 
     try {
         let response = await fetch(resource, {

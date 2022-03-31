@@ -13,15 +13,14 @@ window.addEventListener("load", function(event)
     cubeId = document.getElementById("cubeId").value;
     // Get cubeIds from <input> element
     thresholds = document.getElementById("thresholds").value.split(",");
-    thresholds = [ 50, 100, 150 ]
-    // thresholds.push(500);
 
     //Set input fields to default
-    let date = new Date();
-    date.setMilliseconds(0);
-    console.log(date);
-    document.getElementById("fromTime").valueAsDate = new Date(date.getTime() - 45 * MS_PER_MINUTE);
-    document.getElementById("toTime").valueAsDate = date;
+    let now = new Date();
+    
+    now.setMilliseconds(0);
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById("fromTime").valueAsDate = new Date(now.getTime() - 45 * MS_PER_MINUTE);
+    document.getElementById("toTime").valueAsDate = now;
 
     // Dynamically set options
     let chartContainer = document.getElementById("chart");
@@ -31,6 +30,8 @@ window.addEventListener("load", function(event)
     chartOptions.showPoint = false;
     chartOptions.lineSmooth = false;
     chartOptions.showGrid = false;
+    chartOptions.low = 0;
+    chartOptions.high = thresholds[thresholds.length - 1];
 
     // First time call for default settings
     timeSubmitCallback();

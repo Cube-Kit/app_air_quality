@@ -10,7 +10,7 @@ import { getCubeWithId, getCubesByLocation, getCubes, compareCubes } from "../mo
 // Export the router
 export var router: Router = express.Router();
 // Thresholds for air quality levels
-const qualityThresholdString: string = process.env.AirQualityThresholds || "50 100 150";
+const qualityThresholdString: string = process.env.AirQualityThresholds || "100 200 300";
 const qualityThresholds: Array<number> = qualityThresholdString.split(" ").map((string) => {
     return parseInt(string);
 });

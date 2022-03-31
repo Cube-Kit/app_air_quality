@@ -266,15 +266,8 @@ async function handleCubeData(topic: Array<string>, message: string) {
  */
 function handleSensorData(topic: Array<string>, message: string): void {
     if (topic[1] === "bme680") {
-<<<<<<< HEAD
-
-        let data = JSON.parse(message);
-
-        persistSensorData(topic[2], data.iaq)
-=======
         let bme680Obj = JSON.parse(message);
         persistSensorData(topic[2], bme680Obj.iaq)
->>>>>>> frontend
             .catch((err: Error) => {
                 console.log(err.stack);
             });

@@ -1,0 +1,43 @@
+{{!Add html-head}}
+{{#> html_head}}
+    {{!Add custom scripts}}
+    <link rel="stylesheet" href="/static/css/cube-list.css">
+    <script src="/static/js/utils.js"></script>   
+    <script src="/static/js/cube-list.js"></script>
+    {{!-- <link rel="stylesheet" href="/static/css/cubes-list.css"> --}}
+{{/html_head}}
+
+<body>
+    {{!Fill content}}
+    <div id="content">
+
+        <h1>Cubes</h1>
+    
+            <table>
+                <colgroup>
+                    <col>
+                    <col>
+                    
+                </colgroup>
+                <thead>
+                    <th>Location</th>
+                    <th>Cube Id</th>
+                    
+                </thead>
+                {{#each locations}}
+                    <tr class="location_row">
+                        <td><a href="location/{{this.name}}">{{this.name}}</a></td>
+                        <td></td>
+                    </tr>
+                    {{#each this.cubes}}
+                        <tr class="cube_row">
+                            <td onclick=""></td>
+                            <td onclick=""><a href="cube/{{this.id}}">{{this.id}}</a></td>
+                        </tr>
+                    {{/each}}
+                {{/each}}
+            </table>
+            
+
+</body>
+</html>

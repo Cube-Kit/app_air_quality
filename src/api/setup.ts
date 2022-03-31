@@ -44,7 +44,7 @@ async function setup(req: Request, res: Response){
     let cubes: Array<Cube> = req.body["cubes"];
     cubes.forEach(async (cube: Cube) => {
         try {
-            await addCube(cube.id, cube.location);
+            await addCube(cube);
         } catch (error) {
             console.log(error);
         }

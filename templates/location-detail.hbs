@@ -1,0 +1,31 @@
+{{!Add html-head}}
+{{#> html_head}}
+    {{!Add custom scripts}}
+    <link rel="stylesheet" href="/static/css/cube-detail.css">
+    <link rel="stylesheet" href="/static/css/chartist.css">
+    <script src="/static/js/chartist.js"></script>
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/location-detail.js"></script>
+{{/html_head}}
+
+<body>
+
+    <input id="location" type="hidden" value="{{location}}">
+    <input id="cubeIds" type="hidden" value="{{cubeIds}}">
+    <input id="thresholds" type="hidden" value="{{thresholds}}">
+
+    <div id="content">
+        <h1>air quality {{location}}</h1>
+
+        <label for="fromTime">From:</label>
+        <input type="datetime-local" id="fromTime">
+        <label for="toTime">To:</label>
+        <input type="datetime-local" id="toTime">
+        <button id="timeSubmit">Submit</button>
+
+        <div id="chart" class="ct-chart"></div>
+
+    </div>
+
+</body>
+</html>

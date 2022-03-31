@@ -5,8 +5,8 @@
  */
 
 //type imports
-import { MqttClient, ISubscriptionMap, IPublishPacket, ISubscriptionGrant } from "mqtt";
-import { Cube } from "../types";
+import { MqttClient, IClientOptions, ISubscriptionMap, IPublishPacket, ISubscriptionGrant, QoS } from "mqtt";
+import { ActuatorData, Cube } from "../types";
 //external imports
 import mqtt from "mqtt";
 //internal imports
@@ -33,30 +33,24 @@ var defaultTopics: ISubscriptionMap = {
  */
 export async function setupMQTT(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-        console.log('attempting MQTT server connection ...');
 
         //Get broker address
         let mqttUrl: string = process.env.MQTTURL || 'test.mosquitto.org';
         let mqttPort: number = parseInt(process.env.MQTTPORT || '1883');
+
+        console.log('attempting MQTT server connection to: ' + mqttUrl + ":" + mqttPort);
+
         //Connect to broker
-        mqttClient = mqtt.connect([{
-            host: 'mqtt://'+mqttUrl,
+        let clientOptions: IClientOptions = {
+            host: mqttUrl,
             port: mqttPort
-        }]);
+        };
+        mqttClient = mqtt.connect(clientOptions);
 
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server ' + mqttUrl + ":" + mqttPort);
 
-            //Set event listeners
-            mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
-            mqttClient.on('close', () => logMQTTEvent('Close'));
-            mqttClient.on('disconnect', () => logMQTTEvent('Disconnect'));
-            mqttClient.on('offline', () => logMQTTEvent('Offline'));
-            mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
-            mqttClient.on('end', () => logMQTTEvent('End'));
-            mqttClient.on('packetsend', () => logMQTTEvent('Packetsend'));
-            mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
-            mqttClient.on('message', handleMQTTMessage);
+            
             
             // Only subscribe to topics, if the app is setup
             let setup: boolean = await checkForServerToken();
@@ -70,6 +64,17 @@ export async function setupMQTT(): Promise<void> {
                 subscribeCubeMQTTTopics(ids);
             }
         });
+        
+        //Set event listeners
+        mqttClient.on('reconnect', () => logMQTTEvent('Reconnect'));
+        mqttClient.on('close', () => logMQTTEvent('Close'));
+        mqttClient.on('disconnect', () => logMQTTEvent('Disconnect'));
+        mqttClient.on('offline', () => logMQTTEvent('Offline'));
+        mqttClient.on('error', (error) => logMQTTEvent('Error', [error]));
+        mqttClient.on('end', () => logMQTTEvent('End'));
+        mqttClient.on('packetsend', () => logMQTTEvent('Packetsend'));
+        mqttClient.on('packetreceive', (packet) => logMQTTEvent('Packetreceive', [packet]));
+        mqttClient.on('message', handleMQTTMessage);
     });
 }
 
@@ -166,6 +171,26 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
     });
 }
 
+export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: object, timeToTarget?: number) {
+    let topic: string = `actuator/${actuator}/${cubeId}/${location}`;
+
+    let data: ActuatorData = {
+        "value": targetValue
+    }
+    if (timeToTarget !== undefined) {
+        data.time = timeToTarget;
+    }
+
+    let message: string = JSON.stringify(data);
+
+    publishMQTTMessage(topic, message, 2);
+}
+
+function publishMQTTMessage(topic: string, message: string, qos: QoS) {
+    console.log("MQTT: Published to " + topic)
+    mqttClient.publish(topic, message, {qos});
+}
+
 /**
  * Log MQTT events.
  * 
@@ -207,7 +232,7 @@ async function handleCubeData(topic: Array<string>, message: string) {
     switch (topic[1]) {
         case 'create':
             try {
-                await addCube(cube.id, cube.location);
+                await addCube(cube);
                 console.log("added cube "+ cube.id +" at location " + cube.location);
             } catch (error) {
                 console.log(error);
@@ -241,10 +266,15 @@ async function handleCubeData(topic: Array<string>, message: string) {
  */
 function handleSensorData(topic: Array<string>, message: string): void {
     if (topic[1] === "bme680") {
+<<<<<<< HEAD
 
         let data = JSON.parse(message);
 
         persistSensorData(topic[2], data.iaq)
+=======
+        let bme680Obj = JSON.parse(message);
+        persistSensorData(topic[2], bme680Obj.iaq)
+>>>>>>> frontend
             .catch((err: Error) => {
                 console.log(err.stack);
             });

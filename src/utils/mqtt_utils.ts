@@ -11,7 +11,7 @@ import { ActuatorData, Cube } from "../types";
 import mqtt from "mqtt";
 //internal imports
 import { addCube, deleteCubeWithId, getCubes, updateCubeWithId } from "../model/cube";
-import { persistSensorData } from "../model/sensor_data";
+import { persistSensorData, triggerLedActuator } from "../model/sensor_data";
 import { checkForServerToken } from "../model/token";
 
 /**
@@ -171,15 +171,27 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
     });
 }
 
-export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: object, timeToTarget?: number) {
+export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: number, targetProperty: string, timeToTarget?: number) {
     let topic: string = `actuator/${actuator}/${cubeId}/${location}`;
 
-    let data: ActuatorData = {
-        "value": targetValue
-    }
+    // let data: ActuatorData = {
+    //     targetProperty: {
+    //     "value": targetValue}
+    // }
+    // if (timeToTarget !== undefined) {
+    //     data.time = timeToTarget;
+    // }
+
+    // TODO rework/fix ActuatorData type (to be able to set multiple properties)
+    let data : any = {};
+    
+    data[targetProperty] = {"value":targetValue};
+
     if (timeToTarget !== undefined) {
-        data.time = timeToTarget;
+        data[targetProperty]["time"] = timeToTarget;
     }
+
+    
 
     let message: string = JSON.stringify(data);
 
@@ -271,5 +283,19 @@ function handleSensorData(topic: Array<string>, message: string): void {
             .catch((err: Error) => {
                 console.log(err.stack);
             });
+
+        var locationString = "";
+
+        for (var i = 0; i < topic.length - 3; i++) {
+            locationString += topic[i+3];
+            locationString += "/";
+        }
+
+        locationString = locationString.slice(0, -1);
+
+        triggerLedActuator(topic[2], locationString, bme680Obj.iaq)
+        .catch((err: Error) => {
+            console.log(err.stack);
+        });
     }
 }

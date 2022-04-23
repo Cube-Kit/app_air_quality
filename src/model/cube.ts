@@ -7,7 +7,7 @@ import format from 'pg-format';
 import { pool } from "../index";
 import { checkActuatorArray, checkCubeId } from '../utils/input_check_utils';
 import { subscribeCubeMQTTTopics, unsubscribeCubeMQTTTopics } from '../utils/mqtt_utils';
-
+import { lastIAQValues } from "../model/sensor_data";
 // Base tables
 const createCubesTableQuery: string = "CREATE TABLE IF NOT EXISTS cubes (id UUID PRIMARY KEY, location CHAR(255) NOT NULL)";
 // Junction tables
@@ -142,6 +142,8 @@ export async function addCube(cube: Cube): Promise<void> {
             //Subscribe to cube topic
             await subscribeCubeMQTTTopics([cube.id]);
 
+            lastIAQValues[cube.id] = {"lastIAQValues": [], "currentLEDColor": 0};
+
             return resolve();
         } catch(err) {
             return reject(err);
@@ -182,6 +184,8 @@ export function deleteCubeWithId(cubeId: string): Promise<void> {
         try {
             pool.query(deleteCubeWithIdQuery, [cubeId]);
 
+            delete lastIAQValues[cubeId];
+
             return resolve();
         } catch(err) {
             return reject(err);
@@ -203,6 +207,10 @@ export function clearCubesTable(): Promise<void> {
             })
 
             await unsubscribeCubeMQTTTopics(cubeIds);
+
+            for (var key in lastIAQValues){
+                delete lastIAQValues[key];
+            }
 
             return resolve();
         } catch(err) {

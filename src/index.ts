@@ -20,7 +20,7 @@ import passport from "passport";
 import { createTokensTable } from "./model/token";
 import { setupPassport } from "./utils/passport_utils";
 import { createCubeTables } from "./model/cube";
-import { createSensorDataTable } from "./model/sensor_data";
+import { createSensorDataTable, setupIAQValues } from "./model/sensor_data";
 import { setupMQTT } from "./utils/mqtt_utils";
 import { router as apiRoutes } from "./api/api";
 import { router as viewRoutes } from "./views/views";
@@ -115,8 +115,12 @@ async function setupServer(): Promise<void> {
         // Setup passport
         await createTokensTable();
         setupPassport();
+
+        // Setup IAQValues variable
+        await setupIAQValues();
         // Setup mqtt
         await setupMQTT();
+        
     } catch(err) {
         console.log(err);
     }

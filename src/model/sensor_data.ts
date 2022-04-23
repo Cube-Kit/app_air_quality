@@ -3,6 +3,10 @@ import format from 'pg-format';
 // Internal imports
 import { pool } from "../index";
 import { checkCubeId, checkTimestampValidity } from "../utils/input_check_utils";
+import { publishActuatorAction } from '../utils/mqtt_utils';
+import { qualityThresholds } from '../views/views';
+import { Cube } from "../types";
+import { addCube, deleteCubeWithId, getCubes, updateCubeWithId } from "../model/cube";
 
 // Sensor data tables
 const createDataTableQuery: string = "CREATE TABLE IF NOT EXISTS data (id SERIAL PRIMARY KEY, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, FOREIGN KEY(cube_id) REFERENCES cubes(id) ON DELETE CASCADE)";
@@ -12,6 +16,13 @@ const getDataQuery: string = "SELECT * FROM data";
 const persistDataQuery: string = "INSERT INTO data (cube_id, timestamp, data) VALUES ($1, $2, $3)";
 // Clear sensor data
 const clearTableQuery: string = "DELETE FROM data";
+
+export var lastIAQValues: any = new Object();
+  
+const ledColors: Array<number> = (process.env.LEDColors || "85 50 0").
+    split(" ").map(string => {
+        return parseInt(string);
+    });
 
 export function createSensorDataTable(): Promise<void> {
     return new Promise(async (resolve, reject) => {
@@ -157,3 +168,68 @@ export function clearDataTable(): Promise<void> {
         };
     });
 }
+
+
+export function triggerLedActuator(cubeId: string, cubeLocation: string, data: string): Promise<void>{
+    return new Promise((resolve, reject) => {
+        try {
+            checkCubeId(cubeId);
+            if (data === undefined || !data.trim()) {
+                throw new Error("data is undefined or empty");
+            }
+            if (lastIAQValues[cubeId] == undefined) {
+                throw new Error("cubeId doesn't exist");
+            }
+        } catch (err) {
+            return reject(err);
+        }
+        try {
+            if (!(lastIAQValues[cubeId].lastIAQValues.length < 10)) {
+                lastIAQValues[cubeId].lastIAQValues.shift();
+            }
+            lastIAQValues[cubeId].lastIAQValues.push(Number(data));
+
+            
+            var sum = 0;
+            for( var i = 0; i < lastIAQValues[cubeId].lastIAQValues.length; i++ ){
+                sum += parseInt( lastIAQValues[cubeId].lastIAQValues[i], 10 );
+            }
+
+            var avg = sum/lastIAQValues[cubeId].lastIAQValues.length;
+
+            var color = 0
+
+            for( var i = 0; i < qualityThresholds.length; i++) {
+                if (avg <= qualityThresholds[i]) {
+                    color = ledColors[i];
+                    break;
+                }
+            }
+
+            //TODO check if this works
+            publishActuatorAction(cubeLocation, cubeId, "led000", color, "hue");
+            publishActuatorAction(cubeLocation, cubeId, "led000", 255, "val");
+            publishActuatorAction(cubeLocation, cubeId, "led000", 255, "sat");
+
+            
+            return resolve();
+        } catch(err) {
+            return reject(err);
+        };
+    });
+}
+
+export async function setupIAQValues(): Promise<void> {
+    return new Promise(async (resolve, reject) => {
+
+        console.log("setting up iaq variables");
+
+        // Subscribe to sensor data of existing cubes
+        let cubes: Cube[] = await getCubes();
+        let ids: string[] = cubes.map((cube: Cube) => cube.id);
+        ids.forEach(id => {
+            lastIAQValues[id] = {"lastIAQValues": [], "currentLEDColor": 0};
+        });
+        return resolve();
+    });
+} 

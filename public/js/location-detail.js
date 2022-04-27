@@ -31,7 +31,9 @@ window.addEventListener("load", function(event)
     chartOptions.width = (chartContainer.innerWidth*0.85);
     chartOptions.height = (chartContainer.innerHeight*0.85);
     chartOptions.showPoint = false;
-    chartOptions.lineSmooth = false;
+    chartOptions.lineSmooth = Chartist.Interpolation.cardinal({
+        fillHoles: true,
+      });
     chartOptions.showGrid = true;
     chartOptions.low = 0;
     chartOptions.high = thresholds[thresholds.length - 1];

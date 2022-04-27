@@ -19,7 +19,7 @@ const clearTableQuery: string = "DELETE FROM data";
 
 export var lastIAQValues: any = new Object();
   
-const ledColors: Array<number> = (process.env.LEDColors || "85 50 0").
+const ledColors: Array<number> = (process.env.LEDColors || "85 40 0").
     split(" ").map(string => {
         return parseInt(string);
     });

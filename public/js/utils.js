@@ -28,6 +28,8 @@ function formatXLabels(data)
 // Format data to be compatible with chartist.js
 function formatData(data, thresholds){
 
+    console.log(data);
+
     let dateSet = new Set();
     let output = {labels: [], series: []};
 
@@ -44,7 +46,7 @@ function formatData(data, thresholds){
         let dateArray = Array.from(dateSet);
 
         // sort set
-        dateArray.sort((date1, date2) => date1.valueOf() - date2.valueOf());
+        dateArray.sort();
 
         // add thresholds as graphs to be displayed
         let thresholdCount = thresholds.length;
@@ -90,6 +92,8 @@ function formatData(data, thresholds){
                 }
             });
         });
+
+        console.log(output);
 
         output.labels = formatXLabels(dateArray);
 

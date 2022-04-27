@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  # Config for the cube-server
+  app_air_quality:
+    container_name: app_air_quality
+    build: .
+    restart: always
+    # Get the container port from a variable from .env-file
+    ports:
+      - "8081:${PORT}"
+    # Add the environment variables to the container
+    env_file:
+      - "./.env"
+    # Overwrite environment variables
+    # because they define the connection to the other containers
+    environment:
+      PGHOST: "postgres_db"
+      PGPORT: "5432"
+      MQTTURL: "mosquitto_broker"
+      MQTTPORT: "1883"
+
+networks:
+  default:
+    external:
+      name: cubekit

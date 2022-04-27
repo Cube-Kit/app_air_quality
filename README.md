@@ -68,3 +68,52 @@ The server can be modified with the apps .env-file. See the documentation above 
 ```text
 docker build --build-arg SERVER_PORT=8080 -t imagename:tag .
 ```
+
+### docker-compose
+
+The docker-compose file creates the app containers and adds it to the cubekit network.
+This file is meant to be used along the default docker-compose file of the cubekit server.
+
+```text
+docker compose up -d
+```
+
+These environmental variables are overwritten by docker-compose, because they define connections inside the docker network. So they do not need to be provided in their .env-files:
+
+```text
+# .env variables
+PGHOST: "postgres_db"
+PGPORT: "5432"
+MQTTURL: "mosquitto_broker"
+MQTTPORT: "1883"
+```
+
+#### Database connection
+
+This configuration uses the postgres container, which was created during the docker-compose
+of the server. But the database, that is used for the app, has to be created in this
+container first.
+
+```text
+docker exec -u <postgres username> <postgres container id> psql -c 'CREATE DATABASE app_air_quality;'
+```
+
+The postgres username is the one that was configured in the postgres.env-file during the server setup.
+If no username was configured, the default is *postgres*.
+
+#### App
+
+Environment variables for the app can be set with the .env-file.  
+See the documentation above at [app config](#app-config).  
+
+The variables PGHOST, PGPORT, MQTTURL and MQTTPORT are set directly in the docker-compose file and
+override the variables in the .env-file. This is done to ensure connection to
+the PostgreSQL and Mosquitto containers.
+
+Don't forget to set the variables PGUSER, PGPASSWORD and PGDATABASE in the .env-file.
+
+When changing the .env-file make sure to rebuild the container.
+
+```text
+docker compose up -d --build
+```

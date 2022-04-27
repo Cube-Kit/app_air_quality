@@ -56,3 +56,15 @@ Connection to the MQTT server is established though these variables:
 MQTTURL = 'test.mosquitto.org'
 MQTTPORT = 1883
 ```
+
+## Docker
+
+### Dockerfile
+
+The Dockerfile creates an image of the server which exposes a port, given through
+build-arg.
+The server can be modified with the apps .env-file. See the documentation above at [server config](#server-config).
+
+```text
+docker build --build-arg SERVER_PORT=8080 -t imagename:tag .
+```

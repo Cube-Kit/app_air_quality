@@ -6,7 +6,7 @@ import { checkCubeId, checkTimestampValidity } from "../utils/input_check_utils"
 import { publishActuatorAction } from '../utils/mqtt_utils';
 import { qualityThresholds } from '../views/views';
 import { Cube } from "../types";
-import { addCube, deleteCubeWithId, getCubes, updateCubeWithId } from "../model/cube";
+import { getCubes } from "../model/cube";
 
 // Sensor data tables
 const createDataTableQuery: string = "CREATE TABLE IF NOT EXISTS data (id SERIAL PRIMARY KEY, cube_id UUID NOT NULL, timestamp TIMESTAMPTZ NOT NULL, data NUMERIC NOT NULL, FOREIGN KEY(cube_id) REFERENCES cubes(id) ON DELETE CASCADE)";

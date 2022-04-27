@@ -47,20 +47,27 @@ hbs.registerPartials(__dirname + '/templates/partials', function() {});
 // Register static path
 app.use('/static', express.static(path.join(__dirname, './public')));
 
-// Add other middleware
+// Add helmet middleware
 app.use(helmet({
-    contentSecurityPolicy: {
-        useDefaults: true,
-        directives: {
-            "frame-ancestors": ["*"],
-        },
-    },
+    contentSecurityPolicy: false,
     frameguard: false,
     crossOriginEmbedderPolicy: true,
     crossOriginResourcePolicy: {
         policy: "cross-origin"
     }
 }));
+// Decide if CSP should be set to always upgrade to https
+if (process.env.NODE_ENV == "development") {
+    app.use(helmet.contentSecurityPolicy({
+        directives: {
+            "upgrade-insecure-requests": null,
+        }
+    }));
+} else {
+    app.use(helmet.contentSecurityPolicy());
+}
+
+// Add other middleware
 app.use(session({
     secret: process.env.SESSIONSECRET || 'secret',
     // Check if session store implements touch

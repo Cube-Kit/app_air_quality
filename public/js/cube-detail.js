@@ -32,6 +32,9 @@ window.addEventListener("load", function(event)
     chartOptions.showGrid = false;
     chartOptions.low = 0;
     chartOptions.high = thresholds[thresholds.length - 1];
+    chartOptions.lineSmooth = Chartist.Interpolation.cardinal({
+        fillHoles: true
+      });
 
     // First time call for default settings
     timeSubmitCallback();

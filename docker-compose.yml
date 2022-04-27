@@ -2,7 +2,7 @@ version: "3.9"
 services:
   # Config for the cube-server
   app_air_quality:
-    container_name: app_air_quality
+    container_name: cubekit_app_air_quality
     build: .
     restart: always
     # Get the container port from a variable from .env-file

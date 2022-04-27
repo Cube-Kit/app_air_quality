@@ -78,6 +78,12 @@ This file is meant to be used along the default docker-compose file of the cubek
 docker compose up -d
 ```
 
+When adding the app to the server, the address is:
+
+```text
+cubekit_app_air_quality:8081
+```
+
 These environmental variables are overwritten by docker-compose, because they define connections inside the docker network. So they do not need to be provided in their .env-files:
 
 ```text

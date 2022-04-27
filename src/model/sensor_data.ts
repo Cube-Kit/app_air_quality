@@ -206,12 +206,14 @@ export function triggerLedActuator(cubeId: string, cubeLocation: string, data: s
                 }
             }
 
-            //TODO check if this works
-            publishActuatorAction(cubeLocation, cubeId, "led000", color, "hue");
-            publishActuatorAction(cubeLocation, cubeId, "led000", 255, "val");
-            publishActuatorAction(cubeLocation, cubeId, "led000", 255, "sat");
+            let targetValue = {
+                "hue": color,
+                "val": 255,
+                "sat": 255,
+            }
 
-            
+            publishActuatorAction(cubeLocation, cubeId, "led000", targetValue);
+
             return resolve();
         } catch(err) {
             return reject(err);

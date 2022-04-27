@@ -171,28 +171,17 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
     });
 }
 
-export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: number, targetProperty: string, timeToTarget?: number) {
+export function publishActuatorAction(location: string, cubeId: string, actuator: string, targetValue: object, timeToTarget?: number) {
     let topic: string = `actuator/${actuator}/${cubeId}/${location}`;
 
-    // let data: ActuatorData = {
-    //     targetProperty: {
-    //     "value": targetValue}
-    // }
-    // if (timeToTarget !== undefined) {
-    //     data.time = timeToTarget;
-    // }
-
-    // TODO rework/fix ActuatorData type (to be able to set multiple properties)
-    let data : any = {};
-    
-    data[targetProperty] = {"value":targetValue};
-
-    if (timeToTarget !== undefined) {
-        data[targetProperty]["time"] = timeToTarget;
+    let data: ActuatorData = {
+        value: targetValue,
     }
 
+    if (timeToTarget !== undefined) {
+        data.time = timeToTarget;
+    }
     
-
     let message: string = JSON.stringify(data);
 
     publishMQTTMessage(topic, message, 2);

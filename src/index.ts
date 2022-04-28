@@ -129,12 +129,11 @@ async function setupServer(): Promise<void> {
         // Setup passport
         await createTokensTable();
         setupPassport();
+        // Setup mqtt
+        await setupMQTT();
 
         // Setup IAQValues variable
         await setupIAQValues();
-        // Setup mqtt
-        await setupMQTT();
-        
     } catch(err) {
         console.log(err);
     }

@@ -133,7 +133,7 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
         mqttClient.subscribe(topics, function(err: Error, granted: ISubscriptionGrant[]) {
             if(err) {
                 console.log(err);
-                reject(err);
+                return reject(err);
             }
 
             if (granted) {
@@ -141,7 +141,7 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
                     console.log(`MQTT: Subscribed to ${value.topic} with QoS level ${value.qos}.`);
                 })
 
-                resolve();
+                return resolve();
             }
         });
     });
@@ -155,17 +155,17 @@ function subscribeMQTTTopics(topics: ISubscriptionMap): Promise<void> {
  function unsubscribeMQTTTopics(topics: Array<string>): Promise<void> {
     return new Promise((resolve, reject) => {
         if (topics.length === 0) {
-            resolve();
+            return resolve();
         }
         
         //Unsubscribe from topics
         mqttClient.unsubscribe(topics, function(err: Error) {
             if(err) {
                 console.log(err);
-                reject(err);
+                return reject(err);
             } else {
                 console.log("MQTT: unsubscribed from: " + topics);
-                resolve();
+                return resolve();
             }
         });
     });

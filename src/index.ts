@@ -132,7 +132,7 @@ async function setupServer(): Promise<void> {
         // Setup mqtt
         await setupMQTT();
 
-        // Setup IAQValues variable
+        // Setup global array for last air measurements per cube
         await setupIAQValues();
     } catch(err) {
         console.log(err);

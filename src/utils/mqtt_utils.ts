@@ -50,8 +50,6 @@ export async function setupMQTT(): Promise<void> {
         mqttClient.on('connect', async function() {
             console.log('connected to MQTT server ' + mqttUrl + ":" + mqttPort);
 
-            
-            
             // Only subscribe to topics, if the app is setup
             let setup: boolean = await checkForServerToken();
             if (setup) {
@@ -63,6 +61,8 @@ export async function setupMQTT(): Promise<void> {
                 let ids: string[] = cubes.map((cube: Cube) => cube.id);
                 subscribeCubeMQTTTopics(ids);
             }
+
+            resolve();
         });
         
         //Set event listeners

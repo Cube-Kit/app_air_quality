@@ -22,8 +22,10 @@ export const qualityThresholds: Array<number> = qualityThresholdString.split(" "
     return parseInt(number);
 });
 
+// Global variable for storing the last air measurements per cube
 export var lastIAQValues: any = new Object();
-  
+
+// Get the different led colors
 const ledColors: Array<number> = (process.env.LEDColors || "85 40 0").
     split(" ").map(string => {
         return parseInt(string);
@@ -227,7 +229,7 @@ export function triggerLedActuator(cubeId: string, cubeLocation: string, data: s
 }
 
 export async function setupIAQValues(): Promise<void> {
-    console.log('Quality thresholds: ' + qualityThresholds);
+    console.log("Quality thresholds: " + qualityThresholds);
     
     return new Promise(async (resolve, reject) => {
         let cubes: Cube[] = await getCubes();

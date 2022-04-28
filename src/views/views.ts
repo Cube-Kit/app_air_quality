@@ -19,11 +19,11 @@ export var router: Router = express.Router();
 //     res.render("location-list", {locations: locations});
 // })
 
-router.get('/', getCubeList);
+router.get('/', getLocationsList);
 router.get('/cube/:cubeId', getCubeDetail);
 router.get('/location/:location', getLocationDetail);
 
-async function getCubeList(req:Request, res:Response) {
+async function getLocationsList(req:Request, res:Response) {
     try {
         let cubes: Array<Cube> = await getCubes();
         let locationMap: Map<string, Array<Cube>> = new Map();
@@ -43,8 +43,7 @@ async function getCubeList(req:Request, res:Response) {
             }
         );
 
-        res.render("cubes-list", {
-            cubes: cubes,
+        res.render("locations-list", {
             locations: locations,
             thresholds: qualityThresholds
         });
@@ -59,7 +58,7 @@ async function getCubeDetail(req: Request, res: Response) {
     let cubeId: string = req.params["cubeId"];
     try {
         let cube: Cube = await getCubeWithId(cubeId);
-        res.render("cube-detail", {
+        res.render("location-detail", {
             cubeId: cube.id,
             thresholds: qualityThresholds
         });

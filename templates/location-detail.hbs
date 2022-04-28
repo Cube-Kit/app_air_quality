@@ -1,33 +1,55 @@
 {{!Add html-head}}
 {{#> html_head}}
     {{!Add custom scripts}}
-    <link rel="stylesheet" href="/static/css/cube-detail.css">
+    <link rel="stylesheet" href="/static/css/location-detail.css">
     <link rel="stylesheet" href="/static/css/chartist.css">
     <script src="/static/js/chartist.js"></script>
     <script src="/static/js/utils.js"></script>
-    <script src="/static/js/location-detail.js"></script>
+    {{#if location}}
+        <script src="/static/js/location-detail.js"></script>
+    {{/if}}
+
+    {{#if cubeId}}
+        <script src="/static/js/cube-detail.js"></script>
+    {{/if}}
+    
 {{/html_head}}
 
 <body>
 
-    <input id="location" type="hidden" value="{{location}}">
-    <input id="cubeIds" type="hidden" value="{{cubeIds}}">
+    {{#if location}}
+        <input id="location" type="hidden" value="{{location}}">
+        <input id="cubeIds" type="hidden" value="{{cubeIds}}">
+    {{/if}}
+
+    {{#if cubeId}}
+        <input id="cubeId" type="hidden" value="{{cubeId}}">
+    {{/if}}
+
     <input id="thresholds" type="hidden" value="{{thresholds}}">
 
     <div id="content">
-        <h1>air quality {{location}}</h1>
+        {{#if location}}
+            <h1>air quality {{location}}</h1>
+        {{/if}}
+        
+        {{#if cubeId}}
+            <h1>air quality {{cubeId}}</h1>
+        {{/if}}
+        
 
         <label for="fromTime">From:</label>
         <input type="datetime-local" id="fromTime">
+
         <label for="toTime">To:</label>
         <input type="datetime-local" id="toTime">
+
         <button id="timeSubmit">Submit</button>
+
         <input style="margin-left:10px" type="checkbox" id="autoRefresh" name="autoRefresh" value="true" checked>
         <label for="autoRefresh"> refresh automatically</label>
 
         <div id="chart" class="ct-chart"></div>
-
     </div>
-
 </body>
 </html>

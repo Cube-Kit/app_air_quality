@@ -15,7 +15,7 @@ export const qualityThresholds: Array<number> = qualityThresholdString.split(" "
     return parseInt(string);
 });
 
-console.log(qualityThresholds);
+console.log('Quality thresholds: ' + qualityThresholds);
 
 // Authenticate token
 // router.use('/', passport.authenticate('bearer'));
@@ -50,11 +50,12 @@ async function getLocationDetail(req: Request, res: Response) {
     let location: string = req.params["location"];
     try {
         let cubes: Array<Cube> = await getCubesByLocation(location);
-        let cubeIds: Array<string> = []
+        let cubeIds: Array<string> = [];
+
         cubes.forEach(e => {
             cubeIds.push(e.id);
         }); 
-        console.log(cubeIds);
+
         res.render("location-detail", {
             cubeIds: cubeIds,
             location: location,
@@ -67,10 +68,9 @@ async function getLocationDetail(req: Request, res: Response) {
 }
 
 async function getCubeList(req:Request, res:Response) {
-    let location: string = req.params["location"];
     try {
         let cubes: Array<Cube> = await getCubes();
-        console.log(cubes);
+
         let locationSet: Set<string> = new Set();
         let locations: Array<object> = [];
         cubes.forEach(e => {
@@ -86,8 +86,6 @@ async function getCubeList(req:Request, res:Response) {
             })
             locations.push(location);
         });
-
-        console.log(locations);
 
         res.render("cubes-list", {
             cubes: cubes,

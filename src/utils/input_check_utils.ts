@@ -36,8 +36,8 @@ import { validate as uuidvalidate } from "uuid";
  * @param sensors the [Sensors]{@link types.Sensor} of a [Cube]{@link types.Cube}
  */
  export function checkActuatorArray(actuators: Array<Actuator>): void {
-    if (actuators === undefined || actuators.length == 0) {
-        throw(new Error("actuators array is undefined or empty"));
+    if (actuators === undefined) {
+        throw(new Error("actuators array is undefined"));
     }
 
     actuators.forEach((actuator: Actuator) => {

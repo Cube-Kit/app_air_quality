@@ -6,16 +6,10 @@ import express from "express";
 import passport from "passport";
 import { getCubeWithId, getCubesByLocation, getCubes, compareCubes } from "../model/cube";
 // Internal imports
+import { qualityThresholds } from "../model/sensor_data";
 
 // Export the router
 export var router: Router = express.Router();
-// Thresholds for air quality levels
-const qualityThresholdString: string = process.env.AirQualityThresholds || "100 200 300";
-export const qualityThresholds: Array<number> = qualityThresholdString.split(" ").map((string) => {
-    return parseInt(string);
-});
-
-console.log('Quality thresholds: ' + qualityThresholds);
 
 // Authenticate token
 // router.use('/', passport.authenticate('bearer'));

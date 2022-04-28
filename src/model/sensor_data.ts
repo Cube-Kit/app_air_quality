@@ -4,7 +4,6 @@ import format from 'pg-format';
 import { pool } from "../index";
 import { checkCubeId, checkTimestampValidity } from "../utils/input_check_utils";
 import { publishActuatorAction } from '../utils/mqtt_utils';
-import { qualityThresholds } from '../views/views';
 import { Cube } from "../types";
 import { getCubes } from "../model/cube";
 
@@ -16,6 +15,12 @@ const getDataQuery: string = "SELECT * FROM data";
 const persistDataQuery: string = "INSERT INTO data (cube_id, timestamp, data) VALUES ($1, $2, $3)";
 // Clear sensor data
 const clearTableQuery: string = "DELETE FROM data";
+
+// Thresholds for air quality levels
+const qualityThresholdString: string = process.env.AirQualityThresholds || "100 200 300";
+export const qualityThresholds: Array<number> = qualityThresholdString.split(" ").map((number: string) => {
+    return parseInt(number);
+});
 
 export var lastIAQValues: any = new Object();
   
@@ -222,16 +227,16 @@ export function triggerLedActuator(cubeId: string, cubeLocation: string, data: s
 }
 
 export async function setupIAQValues(): Promise<void> {
+    console.log('Quality thresholds: ' + qualityThresholds);
+    
     return new Promise(async (resolve, reject) => {
-
-        console.log("setting up iaq variables");
-
-        // Subscribe to sensor data of existing cubes
         let cubes: Cube[] = await getCubes();
         let ids: string[] = cubes.map((cube: Cube) => cube.id);
+
         ids.forEach(id => {
             lastIAQValues[id] = {"lastIAQValues": [], "currentLEDColor": 0};
         });
+
         return resolve();
     });
-} 
+}

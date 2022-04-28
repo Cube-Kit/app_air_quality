@@ -17,7 +17,7 @@ const persistDataQuery: string = "INSERT INTO data (cube_id, timestamp, data) VA
 const clearTableQuery: string = "DELETE FROM data";
 
 // Thresholds for air quality levels
-const qualityThresholdString: string = process.env.AirQualityThresholds || "100 200 300";
+const qualityThresholdString: string = process.env.AIRQUALITYTHRESHOLDS || "100 200 300";
 export const qualityThresholds: Array<number> = qualityThresholdString.split(" ").map((number: string) => {
     return parseInt(number);
 });
@@ -26,7 +26,7 @@ export const qualityThresholds: Array<number> = qualityThresholdString.split(" "
 export var lastIAQValues: any = new Object();
 
 // Get the different led colors
-const ledColors: Array<number> = (process.env.LEDColors || "85 40 0").
+const ledColors: Array<number> = (process.env.LEDCOLORS || "85 40 0").
     split(" ").map(string => {
         return parseInt(string);
     });

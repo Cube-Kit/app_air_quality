@@ -29,6 +29,36 @@ router.get('/', getCubeList);
 router.get('/cube/:cubeId', getCubeDetail);
 router.get('/location/:location', getLocationDetail);
 
+async function getCubeList(req:Request, res:Response) {
+    try {
+        let cubes: Array<Cube> = await getCubes();
+
+        let locationSet: Set<string> = new Set();
+        let locations: Array<object> = [];
+        cubes.forEach(e => {
+            locationSet.add(e.location);
+        }); 
+
+        locationSet.forEach(l => {
+            let location = {"name": l, "cubes": new Array()};
+            cubes.forEach(e => {
+                if (l === e.location) {
+                    location.cubes.push(e);
+                }
+            })
+            locations.push(location);
+        });
+
+        res.render("cubes-list", {
+            cubes: cubes,
+            locations: locations,
+            thresholds: qualityThresholds
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).end();
+    }
+}
 
 // TODO send threshold values
 async function getCubeDetail(req: Request, res: Response) {
@@ -59,37 +89,6 @@ async function getLocationDetail(req: Request, res: Response) {
         res.render("location-detail", {
             cubeIds: cubeIds,
             location: location,
-            thresholds: qualityThresholds
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).end();
-    }
-}
-
-async function getCubeList(req:Request, res:Response) {
-    try {
-        let cubes: Array<Cube> = await getCubes();
-
-        let locationSet: Set<string> = new Set();
-        let locations: Array<object> = [];
-        cubes.forEach(e => {
-            locationSet.add(e.location);
-        }); 
-
-        locationSet.forEach(l => {
-            let location = {"name": l, "cubes": new Array()};
-            cubes.forEach(e => {
-                if (l === e.location) {
-                    location.cubes.push(e);
-                }
-            })
-            locations.push(location);
-        });
-
-        res.render("cubes-list", {
-            cubes: cubes,
-            locations: locations,
             thresholds: qualityThresholds
         });
     } catch (error) {

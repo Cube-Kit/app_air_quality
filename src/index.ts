@@ -59,12 +59,19 @@ app.use(helmet({
 // Decide if CSP should be set to always upgrade to https
 if (process.env.NODE_ENV == "development") {
     app.use(helmet.contentSecurityPolicy({
+        useDefaults: true,
         directives: {
             "upgrade-insecure-requests": null,
+            "frame-ancestors": [ "*"],
         }
     }));
 } else {
-    app.use(helmet.contentSecurityPolicy());
+    app.use(helmet.contentSecurityPolicy({
+        useDefaults: true,
+        directives: {
+            "frame-ancestors": [ "*"],
+        }
+    }));
 }
 
 // Add other middleware

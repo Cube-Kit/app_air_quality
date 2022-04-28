@@ -50,12 +50,22 @@ See the [postgresql documentation](https://www.postgresql.org/docs/9.1/libpq-env
 
 ### MQTT config
 
-Connection to the MQTT server is established though these variables:
+Connection to the MQTT server is established through these variables:
 
 ```text
 MQTTURL = 'test.mosquitto.org'
 MQTTPORT = 1883
 ```
+### In App config
+
+Set up IAQ warning thresholds and warning colors through these variables:
+
+```text
+AIRQUALITYTHRESHOLDS = '100 200 300' // low, medium, high
+LEDCOLORS = '85 40 0' // low hue, medium hue, high hue
+```
+
+Variables default to the values in the example.
 
 ## Docker
 

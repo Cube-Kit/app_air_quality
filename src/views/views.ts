@@ -32,22 +32,22 @@ router.get('/location/:location', getLocationDetail);
 async function getCubeList(req:Request, res:Response) {
     try {
         let cubes: Array<Cube> = await getCubes();
+        let locationMap: Map<string, Array<Cube>> = new Map();
 
-        let locationSet: Set<string> = new Set();
-        let locations: Array<object> = [];
-        cubes.forEach(e => {
-            locationSet.add(e.location);
-        }); 
-
-        locationSet.forEach(l => {
-            let location = {"name": l, "cubes": new Array()};
-            cubes.forEach(e => {
-                if (l === e.location) {
-                    location.cubes.push(e);
-                }
-            })
-            locations.push(location);
+        cubes.forEach((cube: Cube) => {
+            let location: Array<Cube> = locationMap.get(cube.location) || [];
+            location.push(cube);
+            locationMap.set(cube.location, location);
         });
+
+        let locations =  Array.from(locationMap,
+            (location) => {
+                return {
+                    name: location[0],
+                    cubes: location[1]
+                };
+            }
+        );
 
         res.render("cubes-list", {
             cubes: cubes,

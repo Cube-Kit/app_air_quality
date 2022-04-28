@@ -4,8 +4,8 @@ import { Cube } from "../types";
 // External imports
 import express from "express";
 import passport from "passport";
-import { getCubeWithId, getCubesByLocation, getCubes, compareCubes } from "../model/cube";
 // Internal imports
+import { getCubeWithId, getCubesByLocation, getCubes } from "../model/cube";
 import { qualityThresholds } from "../model/sensor_data";
 
 // Export the router

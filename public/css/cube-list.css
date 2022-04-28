@@ -1,3 +1,7 @@
 .location_row {
     background-color: #b8c2e4;
 }
+
+tr.cube_row td {
+    padding-left: 35px;
+}

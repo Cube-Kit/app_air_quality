@@ -10,34 +10,22 @@
 <body>
     {{!Fill content}}
     <div id="content">
-
-        <h1>Cubes</h1>
-    
-            <table>
-                <colgroup>
-                    <col>
-                    <col>
-                    
-                </colgroup>
-                <thead>
-                    <th>Location</th>
-                    <th>Cube Id</th>
-                    
-                </thead>
-                {{#each locations}}
-                    <tr class="location_row">
-                        <td><a href="location/{{this.name}}">{{this.name}}</a></td>
-                        <td></td>
+        <table>
+            <thead>
+                <th>Locations</th>
+            </thead>
+            {{#each locations}}
+                <tr class="location_row">
+                    <td><a href="location/{{this.name}}">{{this.name}}</a></td>
+                </tr>
+                {{#each this.cubes}}
+                    <tr class="cube_row">
+                        <td>
+                            <a href="cube/{{this.id}}">{{this.id}}</a>
+                        </td>
                     </tr>
-                    {{#each this.cubes}}
-                        <tr class="cube_row">
-                            <td onclick=""></td>
-                            <td onclick=""><a href="cube/{{this.id}}">{{this.id}}</a></td>
-                        </tr>
-                    {{/each}}
                 {{/each}}
-            </table>
-            
-
+            {{/each}}
+        </table>
 </body>
 </html>

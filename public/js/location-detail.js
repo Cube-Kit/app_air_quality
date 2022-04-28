@@ -16,15 +16,6 @@ window.addEventListener("load", function(event)
 
     console.log(thresholds);
 
-
-    //Set input fields to default
-    let now = new Date();
-    
-    now.setMilliseconds(0);
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-    document.getElementById("fromTime").valueAsDate = new Date(now.getTime() - 45 * MS_PER_MINUTE);
-    document.getElementById("toTime").valueAsDate = now;
-
     // Dynamically set options
     let chartContainer = document.getElementById("chart");
 
@@ -39,11 +30,28 @@ window.addEventListener("load", function(event)
     chartOptions.high = thresholds[thresholds.length - 1];
 
     // First time call for default settings
-    timeSubmitCallback();
+    chartRefresh();
 
+    this.setInterval(chartRefresh, 10000);
+    
     // Set click listener for submit button
     document.getElementById("timeSubmit").addEventListener("click", timeSubmitCallback);
 });
+
+async function chartRefresh() {
+
+    if (document.getElementById("autoRefresh").checked == true) {
+        //set input fields
+        let now = new Date();
+        
+        now.setMilliseconds(0);
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById("fromTime").valueAsDate = new Date(now.getTime() - 45 * MS_PER_MINUTE);
+        document.getElementById("toTime").valueAsDate = now;
+
+        timeSubmitCallback();
+    }
+}
 
 // Callback for submit button
 async function timeSubmitCallback() {

@@ -60,7 +60,6 @@ async function getCubeList(req:Request, res:Response) {
     }
 }
 
-// TODO send threshold values
 async function getCubeDetail(req: Request, res: Response) {
 
     let cubeId: string = req.params["cubeId"];

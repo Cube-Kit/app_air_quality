@@ -12,12 +12,7 @@ import { qualityThresholds } from "../model/sensor_data";
 export var router: Router = express.Router();
 
 // Authenticate token
-// router.use('/', passport.authenticate('bearer'));
-
-// router.get('/', (req, res) => {
-//     let locations = getLocations();
-//     res.render("location-list", {locations: locations});
-// })
+router.use('/', passport.authenticate('bearer', { session: false }));
 
 router.get('/', getLocationsList);
 router.get('/cube/:cubeId', getCubeDetail);

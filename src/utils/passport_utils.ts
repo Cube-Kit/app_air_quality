@@ -23,15 +23,8 @@ export async function setupPassport():Promise<void> {
     passport.use(new HttpBearerStrategy((token, done) => {
         getTokenByKey(token)
             .then(async (token: Token) => {
-
-                console.log(token);
-
                 if(token.ttl > 0) {
-                    console.log(token.created);
                     token.created.setSeconds(token.created.getSeconds() + token.ttl);
-                    console.log(token.created);
-                    console.log(new Date());
-                    console.log(token.created < new Date());
                     if(token.created < new Date()) {
                         return done(null, false, {message: 'TTL expired', scope: 'all'});
                     }

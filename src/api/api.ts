@@ -2,16 +2,24 @@
 import { Router, Request, Response } from "express";
 // External imports
 import express from "express";
+import passport from "passport";
 // Internal imports
 import { router as setupRouter } from "./setup";
 import { getSensorData } from "../model/sensor_data";
+import { addToken, deleteTokenByKey, deleteTokenByName } from "../model/token";
+import { Token } from "../types";
+import { randomUUID } from "crypto";
 
 // Export the router
 export var router: Router = express.Router();
 
+// Authenticate token
+router.use('/', passport.authenticate('bearer', { session: false }));
+
 // Delegate API-routes to their routers
 router.use('/', setupRouter);
 router.post('/data/:cubeId', getData);
+router.post('/token/refresh/:token', refreshToken);
 
 async function getData(req: Request, res: Response) {
     let cubeId: string = req.params['cubeId'];
@@ -23,6 +31,19 @@ async function getData(req: Request, res: Response) {
         return res.status(200).send(data);
     } catch (error) {
         console.log(error);
+        return res.status(500).send("database error");
+    }
+}
+
+async function refreshToken(req: Request, res: Response) {
+    let token: string = req.params['token'];
+
+    try {
+        let newToken: Token = await addToken("util_" + randomUUID(), 60);
+        deleteTokenByName(token);
+        return res.status(200).send(newToken);
+    } catch (e) {
+        console.log(e);
         return res.status(500).send("database error");
     }
 }

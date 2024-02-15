@@ -111,7 +111,6 @@ async function requestCubeData(fromDate, toDate, cubeId) {
     let resource = "http://" + appAddress + "/api/data/" + cubeId;
 
     let token = document.getElementById("token").value;
-
     let data = [];
 
     try {
@@ -161,14 +160,16 @@ async function updateToken() {
         let response = await fetch(resource, {
             method: "post",
             headers: {
-              "Accept": "text/plain",
+              "Accept": "application/json",
               "Authorization": "Bearer " + token.trim()
             },
         });
 
         if (response.ok){
-            console.log(response.body);
-            document.getElementById("token").value = response.body;
+
+            let token = await response.json()
+            console.log(token);
+            document.getElementById("token").value = token.key;
         } else {
             console.log(response);
         }

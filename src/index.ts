@@ -89,7 +89,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/', passport.authenticate('bearer', { session: false }));
 app.use('/api', apiRoutes);
 app.use('/', viewRoutes);
 

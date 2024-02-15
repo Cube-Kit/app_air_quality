@@ -22,9 +22,23 @@ export async function setupPassport():Promise<void> {
      */
     passport.use(new HttpBearerStrategy((token, done) => {
         getTokenByKey(token)
-            .then(async (tokenObj: Token) => {
+            .then(async (token: Token) => {
+
+                console.log(token);
+
+                if(token.ttl > 0) {
+                    console.log(token.created);
+                    token.created.setSeconds(token.created.getSeconds() + token.ttl);
+                    console.log(token.created);
+                    console.log(new Date());
+                    console.log(token.created < new Date());
+                    if(token.created < new Date()) {
+                        return done(null, false, {message: 'TTL expired', scope: 'all'});
+                    }
+                }
+
                 // Return token
-                return done(null, tokenObj);
+                return done(null, token);
             })
             .catch((err: Error) => {
                 return done(null, false, {message: 'Token existiert nicht', scope: 'all'});

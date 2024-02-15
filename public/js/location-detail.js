@@ -7,7 +7,8 @@ var MS_PER_MINUTE = 60000;
 
 window.addEventListener("load", function(event) 
 {
-
+    this.setInterval(updateToken, 30000);
+    
     // Get cubeIds from <input> element
     cubeIds = document.getElementById("cubeIds").value.split(",");
 
@@ -79,6 +80,4 @@ async function requestChartData(fromDate, toDate, cubeIds) {
 function drawChart(data) {
 
     new Chartist.Line(".ct-chart", data, chartOptions);
-    
-    console.log("done");
 }

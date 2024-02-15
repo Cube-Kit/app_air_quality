@@ -1,6 +1,8 @@
 export interface Token {
     name: string,
-    key: string
+    key: string,
+    created: Date,
+    ttl: number
 }
 
 export interface Cube {

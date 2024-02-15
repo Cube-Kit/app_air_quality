@@ -1,12 +1,14 @@
 // Type imports
 import { Router, Request, Response } from "express";
-import { Cube } from "../types";
+import { Cube, Token } from "../types";
 // External imports
 import express from "express";
 import passport from "passport";
 // Internal imports
 import { getCubeWithId, getCubesByLocation, getCubes } from "../model/cube";
 import { qualityThresholds } from "../model/sensor_data";
+import { addToken, deleteTokenByKey } from "../model/token";
+import { randomUUID } from "crypto";
 
 // Export the router
 export var router: Router = express.Router();
@@ -53,11 +55,15 @@ async function getCubeDetail(req: Request, res: Response) {
     let cubeId: string = req.params["cubeId"];
     try {
         let cube: Cube = await getCubeWithId(cubeId);
+        let token: Token = await addToken("util_" + randomUUID(), 60);
+
         res.render("location-detail", {
             cubeId: cube.id,
-            thresholds: qualityThresholds
+            thresholds: qualityThresholds,
+            token: token.key.trim()
         });
     } catch (error) {
+        console.log(error);
         res.status(500).end();
     }
 }
@@ -71,12 +77,15 @@ async function getLocationDetail(req: Request, res: Response) {
 
         cubes.forEach(e => {
             cubeIds.push(e.id);
-        }); 
+        });
+
+        let token: Token = await addToken("util_" + randomUUID(), 60);
 
         res.render("location-detail", {
             cubeIds: cubeIds,
             location: location,
-            thresholds: qualityThresholds
+            thresholds: qualityThresholds,
+            token: token.key.trim()
         });
     } catch (error) {
         console.log(error);

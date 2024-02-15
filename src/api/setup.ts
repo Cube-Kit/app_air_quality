@@ -20,7 +20,7 @@ async function setup(req: Request, res: Response){
     // Persist the server access token
     let server_token: string = req.body["serverToken"];
     try {
-        await addToken("server", server_token);
+        await addToken("server", 0, server_token);
     } catch (error: any) {
         if ((error as Error).message.includes("duplicate key value violates unique constraint")) {
             return res.status(500).send("Already registered to a server.");

@@ -8,10 +8,10 @@ import { pool } from "..";
 import { checkTokenKeyValidity } from "../utils/input_check_utils";
 
 // Token table
-const createTokensTableQuery: string = "CREATE TABLE IF NOT EXISTS tokens (name CHAR(64) PRIMARY KEY, key CHAR(32) UNIQUE NOT NULL)";
+const createTokensTableQuery: string = "CREATE TABLE IF NOT EXISTS tokens (name CHAR(64) PRIMARY KEY, key CHAR(32) UNIQUE NOT NULL, created TIMESTAMPTZ NOT NULL, ttl INTEGER NOT NULL)";
 const getTokenByNameQuery: string = 'SELECT * FROM tokens WHERE name=$1';
 const getTokenByKeyQuery: string = 'SELECT * FROM tokens WHERE key=$1';
-const addTokenQuery: string = "INSERT INTO tokens (name,key) VALUES ($1, $2) RETURNING *";
+const addTokenQuery: string = "INSERT INTO tokens (name,key,created,ttl) VALUES ($1, $2, $3, $4) RETURNING *";
 const deleteTokenByKeyQuery: string = "DELETE FROM tokens WHERE key=$1";
 const deleteTokenByNameQuery: string = "DELETE FROM tokens WHERE name=$1";
 const clearTableQuery: string = "DELETE FROM tokens";
@@ -78,19 +78,20 @@ export function getTokenByKey(key: string): Promise<Token> {
     });
 }
 
-export function addToken(name: string, key?: string): Promise<Token> {
+export function addToken(name: string, ttl?: number, key?: string): Promise<Token> {
     return new Promise(async (resolve, reject) => {
         // Check name
         if (name === undefined || !name.trim()) {
             reject("name is undefined or empty");
         }
 
-        if (!key) {
-            key = uuidv4().trim().split('-').join('');
-        }
+        key = key ?? uuidv4().trim().split('-').join('');
+        ttl = ttl ?? 0;
+
+        let created: Date = new Date();
         
         try {
-            let res: QueryResult = await pool.query(addTokenQuery, [name, key]);
+            let res: QueryResult = await pool.query(addTokenQuery, [name, key, created, ttl]);
             return resolve(res.rows[0]);
         } catch(err) {
             return reject(err);

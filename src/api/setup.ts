@@ -13,7 +13,7 @@ import { subscribeDefaultTopics, unsubscribeDefaultTopics } from "../utils/mqtt_
 // Export the router
 export var router: Router = express.Router();
 
-router.post('/setup', setup);
+router.post('/', setup);
 router.post('/reset', passport.authenticate('bearer'), reset);
 
 async function setup(req: Request, res: Response){

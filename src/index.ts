@@ -23,8 +23,9 @@ import { setupPassport } from "./utils/passport_utils";
 import { createCubeTables } from "./model/cube";
 import { createSensorDataTable, setupIAQValues } from "./model/sensor_data";
 import { setupMQTT } from "./utils/mqtt_utils";
-import { router as apiRoutes } from "./api/api";
 import { router as viewRoutes } from "./views/views";
+import { router as setupRoutes } from "./api/setup";
+import { router as apiRoutes } from "./api/api";
 
 // Parse environment variables
 dotenv.config();
@@ -89,6 +90,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/setup', setupRoutes);
 app.use('/api', apiRoutes);
 app.use('/', viewRoutes);
 

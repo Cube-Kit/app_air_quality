@@ -4,7 +4,6 @@ import { Router, Request, Response } from "express";
 import express from "express";
 import passport from "passport";
 // Internal imports
-import { router as setupRouter } from "./setup";
 import { getSensorData } from "../model/sensor_data";
 import { addToken, deleteTokenByKey, deleteTokenByName } from "../model/token";
 import { Token } from "../types";
@@ -16,8 +15,6 @@ export var router: Router = express.Router();
 // Authenticate token
 router.use('/', passport.authenticate('bearer', { session: false }));
 
-// Delegate API-routes to their routers
-router.use('/', setupRouter);
 router.post('/data/:cubeId', getData);
 router.post('/token/refresh/:token', refreshToken);
 

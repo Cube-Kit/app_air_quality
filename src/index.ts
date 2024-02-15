@@ -14,6 +14,7 @@ import { Pool } from "pg";
 // Middleware imports
 import session from 'express-session';
 import helmet from "helmet";
+import cors from "cors";
 import dotenv from "dotenv";
 import passport from "passport";
 // Internal imports
@@ -81,12 +82,14 @@ app.use(session({
     resave: false,
     // Because of cookie banner
     saveUninitialized: false
-}))
+}));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/', passport.authenticate('bearer', { session: false }));
 app.use('/api', apiRoutes);
 app.use('/', viewRoutes);
 

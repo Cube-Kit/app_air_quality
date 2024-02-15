@@ -107,10 +107,10 @@ function formatData(data, thresholds){
 // Request data for single cube from given time window
 async function requestCubeData(fromDate, toDate, cubeId) {
 
-    let resource = "http://"
-    resource += window.location.host;
-    resource += "/api/data/";
-    resource += cubeId;
+    let appAddress = document.getElementById("appAddress").value;
+    let resource = "http://" + appAddress + "/api/data/" + cubeId;
+
+    let token = document.getElementById("token").value;
 
     let data = [];
 
@@ -119,7 +119,8 @@ async function requestCubeData(fromDate, toDate, cubeId) {
             method: "post",
             headers: {
               "Accept": "application/json",
-              "Content-Type": "application/json"
+              "Content-Type": "application/json",
+              "Authorization": "Bearer " + token.trim()
             },
           
             body: JSON.stringify({
@@ -148,4 +149,31 @@ async function requestCubeData(fromDate, toDate, cubeId) {
 function callSubPage(subUrl) {
     let hostname = window.location.hostname;
     window.location = hostname.concat(subUrl);
+}
+
+async function updateToken() {
+    let appAddress = document.getElementById("appAddress").value;
+    let token = document.getElementById("token").value;
+
+    let resource = "http://" + appAddress + "/api/token/refresh/" + token;
+
+    try {
+        let response = await fetch(resource, {
+            method: "post",
+            headers: {
+              "Accept": "text/plain",
+              "Authorization": "Bearer " + token.trim()
+            },
+        });
+
+        if (response.ok){
+            console.log(response.body);
+            document.getElementById("token").value = response.body;
+        } else {
+            console.log(response);
+        }
+
+    } catch(error) {
+        console.log(error);
+    }
 }

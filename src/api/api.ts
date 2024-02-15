@@ -5,7 +5,7 @@ import express from "express";
 import passport from "passport";
 // Internal imports
 import { getSensorData } from "../model/sensor_data";
-import { addToken, deleteTokenByKey, deleteTokenByName } from "../model/token";
+import { addToken, deleteTokenByKey } from "../model/token";
 import { Token } from "../types";
 import { randomUUID } from "crypto";
 
@@ -37,7 +37,7 @@ async function refreshToken(req: Request, res: Response) {
 
     try {
         let newToken: Token = await addToken("util_" + randomUUID(), 60);
-        deleteTokenByName(token);
+        deleteTokenByKey(token);
         return res.status(200).send(newToken);
     } catch (e) {
         console.log(e);
